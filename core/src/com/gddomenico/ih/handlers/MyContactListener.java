@@ -1,37 +1,37 @@
 package com.gddomenico.ih.handlers;
 
-
 import com.badlogic.gdx.physics.box2d.*;
+
+import java.util.ArrayList;
 
 public class MyContactListener implements ContactListener {
 
     private boolean playerOnContact;
     private boolean rightContact;
     private boolean leftContact;
+    public Fixture currentEnemy;
     public Fixture fa;
     public Fixture fb;
+
 
     public void beginContact(Contact c) {
         fa = c.getFixtureA();
         fb = c.getFixtureB();
 
-        if(fa.getUserData() != null && fa.getUserData().equals("Foot")){
+        if(fa.getUserData() != null && fa.getUserData().equals("Foot_Enemy")){
             playerOnContact = true;
+            currentEnemy = fa;
+
         }
-        if(fb.getUserData() != null && fb.getUserData().equals("Foot")){
+        if(fb.getUserData() != null && fb.getUserData().equals("Foot_Enemy")){
             playerOnContact = true;
+            currentEnemy = fb;
+
         }
-        if(fa.getUserData() != null && fa.getUserData().equals("Enemy")){
-            playerOnContact = true;
-        }
-        if(fb.getUserData() != null && fb.getUserData().equals("Enemy")){
-            playerOnContact = true;
-        }
+
     }
 
     public void endContact(Contact c) {
-        fa = c.getFixtureA();
-        fb = c.getFixtureB();
 
         if(fa.getUserData() != null && fa.getUserData().equals("Foot")){
             playerOnContact = false;
@@ -42,6 +42,7 @@ public class MyContactListener implements ContactListener {
     }
 
     public boolean isPlayerOnContact() { return playerOnContact; }
+
 
     public void preSolve(Contact c, Manifold m) {
         if(m.getLocalNormal().epsilonEquals(1,-0)){
