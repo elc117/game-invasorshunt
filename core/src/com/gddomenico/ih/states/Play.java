@@ -24,7 +24,15 @@ public class Play extends GameState {
 
     private Body playerBody;
     private Body enemyBody;
+
+    private Body borderUpBody;
+    private Body borderDownBody;
+    private Body borderRightBody;
+    private Body borderLeftBody;
+
     private final MyContactListener cl;
+
+    public ArrayList<Tuple<Body,Integer>> bodiesToRemove = new ArrayList<>();
 
     public ArrayList<Tuple<Body,Integer>> bodiesToRemove = new ArrayList<>();   
 
@@ -40,11 +48,13 @@ public class Play extends GameState {
 
         createEnemies();
 
+        createBorder();
+      
         //set up b2d cam
         b2dCam = new OrthographicCamera();
         b2dCam.setToOrtho(false, invasorsHunt.V_WIDTH / PPM, invasorsHunt.V_HEIGHT / PPM);
     }
-    
+   
     public void FollowPlayer (Body enemy) {
 
     	Vector2 position = playerBody.getPosition();
@@ -127,13 +137,13 @@ public class Play extends GameState {
         for(int i=0;i<bodiesToRemove.size();i++){
             if(bodiesToRemove.get(i).getY()==5){
                 Body b = bodiesToRemove.get(i).getX();
-                if(b.getType()!=null) {
+                if(b.getType()!=null){
                     world.destroyBody(b);
                     bodiesToRemove.remove(i);
                 }
+
             }
         }
-        
     }
     public void render() {
         //clear screen
@@ -143,11 +153,62 @@ public class Play extends GameState {
     }
     public void dispose() {}
 
+    public void createBorder(){
+        BodyDef bdef = new BodyDef();
+        PolygonShape shape = new PolygonShape();
+        FixtureDef fdef = new FixtureDef();
+
+        //Border Down
+        bdef.position.set(invasorsHunt.V_WIDTH / PPM,invasorsHunt.V_HEIGHT / PPM);
+        bdef.type =  BodyDef.BodyType.StaticBody;
+        borderUpBody = world.createBody(bdef);
+
+        shape.setAsBox(invasorsHunt.V_WIDTH / PPM,0 / PPM);
+        fdef.shape = shape;
+        fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+        //to change the category
+        borderUpBody.createFixture(fdef).setUserData("Border_Down");
+
+        //Border Up
+        bdef.position.set(0 / PPM,invasorsHunt.V_HEIGHT / PPM);
+        bdef.type =  BodyDef.BodyType.StaticBody;
+        borderDownBody = world.createBody(bdef);
+
+        shape.setAsBox(0 / PPM,invasorsHunt.V_HEIGHT / PPM);
+        fdef.shape = shape;
+        fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+        //to change the category
+        borderDownBody.createFixture(fdef).setUserData("Border_Up");
+
+        //Border Left
+        bdef.position.set(invasorsHunt.V_WIDTH / PPM,0 / PPM);
+        bdef.type =  BodyDef.BodyType.StaticBody;
+        borderLeftBody = world.createBody(bdef);
+
+        shape.setAsBox(invasorsHunt.V_WIDTH / PPM,0 / PPM);
+        fdef.shape = shape;
+        fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+        //to change the category
+        borderLeftBody.createFixture(fdef).setUserData("Border_Left");
+
+        //Border Right
+        bdef.position.set(invasorsHunt.V_WIDTH / PPM, invasorsHunt.V_HEIGHT / PPM);
+        bdef.type =  BodyDef.BodyType.StaticBody;
+        borderRightBody = world.createBody(bdef);
+
+        shape.setAsBox(0 / PPM,invasorsHunt.V_HEIGHT  / PPM);
+        fdef.shape = shape;
+        fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+        //to change the category
+        borderRightBody.createFixture(fdef).setUserData("Border_Right");
+    }
+
     public void createPlayer(){
 
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
+
 
         //player
         bdef.position.set(160 / PPM,120 / PPM);
@@ -156,17 +217,17 @@ public class Play extends GameState {
 
         shape.setAsBox(5 / PPM,5 / PPM);
         fdef.shape = shape;
+        fdef.friction = 100000000000000f;
         //to change the category
-        fdef.isSensor = true;
         playerBody.createFixture(fdef).setUserData("Player");
 
         // create a foot sensor
-        shape.setAsBox(5/PPM, 2/PPM, new Vector2(0, -3 / PPM), 0);
-        fdef.shape = shape;
-        fdef.isSensor = false;
-        fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
-        fdef.filter.maskBits = B2DVars.BIT_ENEMY;
-        playerBody.createFixture(fdef).setUserData("Foot");
+//        shape.setAsBox(5/PPM, 2/PPM, new Vector2(0, -3 / PPM), 0);
+//        fdef.shape = shape;
+//        fdef.isSensor = false;
+//        fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
+//        fdef.filter.maskBits = B2DVars.BIT_ENEMY;
+//        playerBody.createFixture(fdef).setUserData("Foot");
 
     }
     //Just a func to get an random int
@@ -209,6 +270,7 @@ public class Play extends GameState {
         for(int i=0;i<bodiesToRemove.size();i++){
             if(bodiesToRemove.get(i).getX() == cl.currentEnemy.getBody()){
                 bodiesToRemove.get(i).setY(bodiesToRemove.get(i).getY()+1);
+              
                 System.out.println("to remove: " + bodiesToRemove.get(i).getY());
                 System.out.println("to remove: " + bodiesToRemove.get(i).getX());
                 return;

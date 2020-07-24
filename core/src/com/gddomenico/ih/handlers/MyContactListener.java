@@ -33,10 +33,10 @@ public class MyContactListener implements ContactListener {
 
     public void endContact(Contact c) {
 
-        if(fa.getUserData() != null && fa.getUserData().equals("Foot")){
+        if(fa.getUserData() != null && fa.getUserData().equals("Foot_Enemy")){
             playerOnContact = false;
         }
-        if(fb.getUserData() != null && fb.getUserData().equals("Foot")){
+        if(fb.getUserData() != null && fb.getUserData().equals("Foot_Enemy")){
             playerOnContact = false;
         }
     }
