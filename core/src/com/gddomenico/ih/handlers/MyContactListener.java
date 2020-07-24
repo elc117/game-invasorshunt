@@ -35,9 +35,13 @@ public class MyContactListener implements ContactListener {
 
         if(fa.getUserData() != null && fa.getUserData().equals("Foot_Enemy")){
             playerOnContact = false;
+            leftContact = false;
+            rightContact = false;
         }
         if(fb.getUserData() != null && fb.getUserData().equals("Foot_Enemy")){
             playerOnContact = false;
+            leftContact = false;
+            rightContact = false;
         }
     }
 

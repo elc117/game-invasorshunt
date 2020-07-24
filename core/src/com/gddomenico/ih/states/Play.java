@@ -33,7 +33,10 @@ public class Play extends GameState {
     private final MyContactListener cl;
 
     public ArrayList<Tuple<Body,Integer>> bodiesToRemove = new ArrayList<>();
-    
+
+    public Integer playerHits = 0;
+
+    private float timer = 0;
 
     public Play(GameStateManager gsm) {
         super(gsm);
@@ -126,9 +129,10 @@ public class Play extends GameState {
         Array<Body> bodies = new Array<Body>();
         world.getBodies(bodies);
            
-        for(int i = 0; i < bodies.size; i++) 
-        	if (bodies.get(i) != playerBody)
-        	FollowPlayer(bodies.get(i));        
+        for(int i = 0; i < bodies.size; i++)
+//        	if (bodies.get(i) != playerBody)
+//        	FollowPlayer(bodies.get(i));
+
 
         world.step(dt, 6, 2);
         
@@ -144,9 +148,17 @@ public class Play extends GameState {
             }
         }
     }
+
     public void render() {
         //clear screen
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        //Set a hit to the player every 4 seconds
+        timer += Gdx.graphics.getDeltaTime();
+        if(timer >= 4f) {
+            setPlayerHits();
+            timer = 0f;
+        }
 
         b2dr.render(world, b2dCam.combined);
     }
@@ -220,13 +232,6 @@ public class Play extends GameState {
         //to change the category
         playerBody.createFixture(fdef).setUserData("Player");
 
-        // create a foot sensor
-//        shape.setAsBox(5/PPM, 2/PPM, new Vector2(0, -3 / PPM), 0);
-//        fdef.shape = shape;
-//        fdef.isSensor = false;
-//        fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
-//        fdef.filter.maskBits = B2DVars.BIT_ENEMY;
-//        playerBody.createFixture(fdef).setUserData("Foot");
 
     }
     //Just a func to get an random int
@@ -276,5 +281,11 @@ public class Play extends GameState {
             }
         }
         bodiesToRemove.add(new Tuple(cl.currentEnemy.getBody(),1));
+    }
+
+    public void setPlayerHits(){
+        if(cl.isPlayerOnContact() && (cl.isLeftContact() || cl.isRightContact()))
+            playerHits++;
+        System.out.println(playerHits);
     }
 }
