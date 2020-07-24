@@ -33,8 +33,7 @@ public class Play extends GameState {
     private final MyContactListener cl;
 
     public ArrayList<Tuple<Body,Integer>> bodiesToRemove = new ArrayList<>();
-
-    public ArrayList<Tuple<Body,Integer>> bodiesToRemove = new ArrayList<>();   
+    
 
     public Play(GameStateManager gsm) {
         super(gsm);
