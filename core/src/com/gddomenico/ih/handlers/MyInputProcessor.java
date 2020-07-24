@@ -24,6 +24,9 @@ public class MyInputProcessor extends InputAdapter {
         if(k == Input.Keys.SPACE){
             MyInput.setKey(MyInput.BUTTON_SPACE, true);
         }
+        if(k == Input.Keys.ENTER){
+            MyInput.setKey(MyInput.BUTTON_ENTER, true);
+        }
         return true;
     }
 
@@ -45,6 +48,9 @@ public class MyInputProcessor extends InputAdapter {
         }
         if(k == Input.Keys.SPACE){
             MyInput.setKey(MyInput.BUTTON_SPACE, false);
+        }
+        if(k == Input.Keys.ENTER){
+            MyInput.setKey(MyInput.BUTTON_ENTER, false);
         }
         return true;
     }
