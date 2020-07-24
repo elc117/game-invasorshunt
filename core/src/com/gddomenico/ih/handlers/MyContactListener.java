@@ -2,7 +2,6 @@ package com.gddomenico.ih.handlers;
 
 import com.badlogic.gdx.physics.box2d.*;
 
-import java.util.ArrayList;
 
 public class MyContactListener implements ContactListener {
 
@@ -33,10 +32,10 @@ public class MyContactListener implements ContactListener {
 
     public void endContact(Contact c) {
 
-        if(fa.getUserData() != null && fa.getUserData().equals("Foot")){
+        if(fa.getUserData() != null && fa.getUserData().equals("Foot_Enemy")){
             playerOnContact = false;
         }
-        if(fb.getUserData() != null && fb.getUserData().equals("Foot")){
+        if(fb.getUserData() != null && fb.getUserData().equals("Foot_Enemy")){
             playerOnContact = false;
         }
     }

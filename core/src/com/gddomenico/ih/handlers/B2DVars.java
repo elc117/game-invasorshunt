@@ -5,6 +5,7 @@ public class B2DVars {
     public static final float PPM = 100;
 
     // category bits
+    public static final short  BIT_BORDER = 3;
     public static final short  BIT_ENEMY = 2;
     public static final short  BIT_PLAYER = 1;
 }
