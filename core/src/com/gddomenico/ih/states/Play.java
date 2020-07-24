@@ -34,8 +34,7 @@ public class Play extends GameState {
 
     public ArrayList<Tuple<Body,Integer>> bodiesToRemove = new ArrayList<>();
 
-    
-    Array<Body> bodies;
+    public ArrayList<Tuple<Body,Integer>> bodiesToRemove = new ArrayList<>();   
 
     public Play(GameStateManager gsm) {
         super(gsm);
@@ -50,30 +49,27 @@ public class Play extends GameState {
         createEnemies();
 
         createBorder();
-
-        bodies = new Array<Body>();
-        world.getBodies(bodies);
+      
         //set up b2d cam
         b2dCam = new OrthographicCamera();
         b2dCam.setToOrtho(false, invasorsHunt.V_WIDTH / PPM, invasorsHunt.V_HEIGHT / PPM);
     }
-    
-//    public void FollowPlayer (Body enemy) {
-//
-//    	Vector2 position = playerBody.getPosition();
-//    	Vector2 positionEnemy = enemy.getPosition();
-//
-//    	float px = position.x - positionEnemy.x;
-//    	float py = position.y - positionEnemy.y;
-//
-//    	float hipotenusa = (float) Math.sqrt((px*px) + (py * py));
-//
-//    	float cos = (px / hipotenusa)*0.5f;
-//    	float sin = (py / hipotenusa)*0.5f;
-//
-//
-//    	enemy.setLinearVelocity(cos, sin);
-//    }
+   
+    public void FollowPlayer (Body enemy) {
+
+    	Vector2 position = playerBody.getPosition();
+    	Vector2 positionEnemy = enemy.getPosition();
+
+    	float px = position.x - positionEnemy.x;
+    	float py = position.y - positionEnemy.y;
+
+    	float hipotenusa = (float) Math.sqrt((px*px) + (py * py));
+
+    	float cos = (px / hipotenusa)*0.5f;
+    	float sin = (py / hipotenusa)*0.5f;
+
+    	enemy.setLinearVelocity(cos, sin);
+    }
 
     public void handleInput() {
         if(MyInput.isDown(MyInput.BUTTON_W)) {
@@ -125,16 +121,18 @@ public class Play extends GameState {
     }
 
     public void update(float dt) {
+        
+    	handleInput();
 
-        handleInput();
-                
-        for(int i = 0; i < bodies.size; i++) {
-//        	if (bodies.get(i) != playerBody){
-//                FollowPlayer(bodies.get(i));
-//            }
-        }
+        Array<Body> bodies = new Array<Body>();
+        world.getBodies(bodies);
+           
+        for(int i = 0; i < bodies.size; i++) 
+        	if (bodies.get(i) != playerBody)
+        	FollowPlayer(bodies.get(i));        
 
         world.step(dt, 6, 2);
+        
 
         for(int i=0;i<bodiesToRemove.size();i++){
             if(bodiesToRemove.get(i).getY()==5){
@@ -243,7 +241,7 @@ public class Play extends GameState {
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
 
-        for (int i=0;i<=50;i++){
+        for (int i=0;i<=5;i++){
             //enemy
             bdef.position.set((100+getRand(getRand(-50,50),200)) / PPM,(120+getRand(getRand(-50,50),100)) / PPM);
             bdef.type =  BodyDef.BodyType.KinematicBody;
@@ -272,8 +270,9 @@ public class Play extends GameState {
         for(int i=0;i<bodiesToRemove.size();i++){
             if(bodiesToRemove.get(i).getX() == cl.currentEnemy.getBody()){
                 bodiesToRemove.get(i).setY(bodiesToRemove.get(i).getY()+1);
-                System.out.println(bodiesToRemove.get(i).getY());
-                System.out.println(bodiesToRemove.get(i).getX());
+              
+                System.out.println("to remove: " + bodiesToRemove.get(i).getY());
+                System.out.println("to remove: " + bodiesToRemove.get(i).getX());
                 return;
             }
         }

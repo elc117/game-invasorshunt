@@ -2,6 +2,7 @@ package com.gddomenico.ih.handlers;
 
 import com.badlogic.gdx.physics.box2d.*;
 
+import java.util.ArrayList;
 
 public class MyContactListener implements ContactListener {
 
