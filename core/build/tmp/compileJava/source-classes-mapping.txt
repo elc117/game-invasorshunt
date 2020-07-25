@@ -8,13 +8,15 @@ com/gddomenico/ih/handlers/MyInputProcessor.java
  com.gddomenico.ih.handlers.MyInputProcessor
 com/gddomenico/ih/handlers/MyInput.java
  com.gddomenico.ih.handlers.MyInput
+com/gddomenico/ih/states/Help.java
+ com.gddomenico.ih.states.Help
+com/gddomenico/ih/handlers/MyContactListener.java
+ com.gddomenico.ih.handlers.MyContactListener
+com/gddomenico/ih/handlers/Tuple.java
+ com.gddomenico.ih.handlers.Tuple
+com/gddomenico/ih/states/GameState.java
+ com.gddomenico.ih.states.GameState
 com/gddomenico/ih/states/Play.java
  com.gddomenico.ih.states.Play
 com/gddomenico/ih/handlers/GameStateManager.java
  com.gddomenico.ih.handlers.GameStateManager
-com/gddomenico/ih/states/GameState.java
- com.gddomenico.ih.states.GameState
-com/gddomenico/ih/handlers/Tuple.java
- com.gddomenico.ih.handlers.Tuple
-com/gddomenico/ih/handlers/MyContactListener.java
- com.gddomenico.ih.handlers.MyContactListener

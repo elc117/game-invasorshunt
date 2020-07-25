@@ -1,8 +1,11 @@
 package com.gddomenico.ih.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,23 +18,32 @@ public class Menu extends GameState {
 	
     private BitmapFont titleFont;
     private BitmapFont font;
+    
+	private Texture img;
 
     private final String title = "Ivasors Hunt";
+    
+    private Music music;
     
     private int currentItem;
     private String[] menuItems;
     
     public Menu(GameStateManager gsm) {
         super(gsm);
+
+		img = new Texture("badlogic.jpg");
         
         currentItem = 0;
         
         titleFont = new BitmapFont(Gdx.files.internal("font.fnt"));
-        
-        //titleFont.setColor(Color.WHITE);
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("menu.wav"));        
+        music.setLooping(false);
+        music.setVolume(0.2f);
+        music.play();
         
         font = new BitmapFont(Gdx.files.internal("font.fnt"));
-        font.getData().setScale(0.5f);
+        font.getData().setScale((float) (invasorsHunt.SCALE/4f));
     	
         
         menuItems = new String[] {
@@ -86,6 +98,9 @@ public class Menu extends GameState {
     	
     	sb.begin();
     	
+		sb.draw(img, 0, 0,invasorsHunt.V_WIDTH, invasorsHunt.V_HEIGHT);  	
+    	
+    	
     	titleFont.draw(
 			sb, 
 			title, 
@@ -112,5 +127,8 @@ public class Menu extends GameState {
     	sb.end();
     			
     };
-    public void dispose() {};
+    public void dispose() {
+    	img.dispose();
+    	music.dispose();
+    };
 }

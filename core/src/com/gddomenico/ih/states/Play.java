@@ -2,6 +2,7 @@ package com.gddomenico.ih.states;
 
 import static com.gddomenico.ih.handlers.B2DVars.PPM;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -37,10 +38,16 @@ public class Play extends GameState {
     public Integer playerHits = 0;
 
     private float timer = 0;
+    
+    private Sound punch;
+    private Sound miss;
 
     public Play(GameStateManager gsm) {
         super(gsm);
 
+        punch = Gdx.audio.newSound(Gdx.files.internal("punch.wav"));
+        miss = Gdx.audio.newSound(Gdx.files.internal("missed.wav"));  
+        
         world = new World(new Vector2(0, 0), true);
         cl = new MyContactListener();
         world.setContactListener(cl);
@@ -69,8 +76,10 @@ public class Play extends GameState {
 
     	float cos = (px / hipotenusa)*0.5f;
     	float sin = (py / hipotenusa)*0.5f;
+    
+    	//System.out.println("hipot: " + hipotenusa);
 
-    	enemy.setLinearVelocity(cos, sin);
+  		enemy.setLinearVelocity(cos, sin);
     }
 
     public void handleInput() {
@@ -102,6 +111,7 @@ public class Play extends GameState {
         }
         if(MyInput.isPressed(MyInput.BUTTON_K)){
             if(cl.isPlayerOnContact()){
+            	punch.play(0.1f);
                 getBodiesToRemove();
                 if(cl.isLeftContact() && !rightArm) {
 
@@ -113,6 +123,7 @@ public class Play extends GameState {
                 	System.out.println("Punch somewhere else");
                 }
             }else{
+            	miss.play(0.1f);
                 System.out.println("Missed!!");
             }
 
@@ -130,8 +141,8 @@ public class Play extends GameState {
         world.getBodies(bodies);
            
         for(int i = 0; i < bodies.size; i++)
-//        	if (bodies.get(i) != playerBody)
-//        	FollowPlayer(bodies.get(i));
+        	if (bodies.get(i) != playerBody)
+        	FollowPlayer(bodies.get(i));
 
 
         world.step(dt, 6, 2);
@@ -162,7 +173,10 @@ public class Play extends GameState {
 
         b2dr.render(world, b2dCam.combined);
     }
-    public void dispose() {}
+    public void dispose() {
+    	punch.dispose();
+    	miss.dispose();
+    }
 
     public void createBorder(){
         BodyDef bdef = new BodyDef();
