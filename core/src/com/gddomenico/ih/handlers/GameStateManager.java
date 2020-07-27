@@ -1,6 +1,7 @@
 package com.gddomenico.ih.handlers;
 
 import com.gddomenico.ih.invasorsHunt;
+import com.gddomenico.ih.states.End;
 import com.gddomenico.ih.states.GameState;
 import com.gddomenico.ih.states.Play;
 import com.gddomenico.ih.states.Menu;
@@ -14,6 +15,7 @@ public class GameStateManager {
 
     public static final int MENU = 420;
     public static final int PLAY = 666;
+    public static final int END = 6969;
 
     public GameStateManager(invasorsHunt game) {
         this.game = game;
@@ -34,6 +36,7 @@ public class GameStateManager {
     private GameState getState(int state) {
         if(state == MENU) return new Menu(this);
         if(state == PLAY) return new Play(this);
+        if(state == END) return new End(this);
         return null;
     }
 

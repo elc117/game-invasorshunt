@@ -147,6 +147,10 @@ public class Play extends GameState {
 
             }
         }
+
+        //Perdeu o jogo
+        if(playerHits==10)
+            gsm.setState(GameStateManager.END);
     }
 
     public void render() {
@@ -155,7 +159,7 @@ public class Play extends GameState {
 
         //Set a hit to the player every 4 seconds
         timer += Gdx.graphics.getDeltaTime();
-        if(timer >= 4f) {
+        if(timer >= 3.420f) {
             setPlayerHits();
             timer = 0f;
         }
