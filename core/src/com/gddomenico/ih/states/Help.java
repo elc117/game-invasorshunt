@@ -8,8 +8,7 @@ import com.gddomenico.ih.handlers.GameStateManager;
 
 public class Help extends GameState {
 	
-	public Help(GameStateManager gsm) {
-		
+	public Help(GameStateManager gsm) {		
 	    super(gsm);
 	    
 	}
