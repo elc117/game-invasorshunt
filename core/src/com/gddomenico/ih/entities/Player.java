@@ -1,54 +1,28 @@
 package com.gddomenico.ih.entities;
 
-import static com.gddomenico.ih.handlers.B2DVars.PPM;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.gddomenico.ih.handlers.MyContactListener;
 import com.gddomenico.ih.handlers.MyInput;
+import com.gddomenico.ih.invasorsHunt;
 
-public class Player{
-	
-	private Body playerBody;
+public class Player extends B2DSprite{
 
     private Integer playerHits = 0;
     private boolean rightArm = false;
 
-    private Sound punch;
-    private Sound miss;
-    
-    private MyContactListener cl;
-    
+    private final MyContactListener cl;
 
-	public Player(World world) {
-		
-        BodyDef bdef = new BodyDef();
-        PolygonShape shape = new PolygonShape();
-        FixtureDef fdef = new FixtureDef();
-        
-        punch = Gdx.audio.newSound(Gdx.files.internal("punch.wav"));
-        miss = Gdx.audio.newSound(Gdx.files.internal("missed.wav"));  
+	public Player(Body body) {
+		super(body);
 
-        //player
-        cl = new MyContactListener();
-        world.setContactListener(cl);
-        
-        bdef.position.set(160 / PPM,120 / PPM);
-        bdef.type =  BodyDef.BodyType.KinematicBody;
-        playerBody = world.createBody(bdef);
-        
-        shape.setAsBox(5 / PPM,5 / PPM);
-        fdef.shape = shape;
-        fdef.friction = 100000000000000f;
-        //to change the category
-        playerBody.createFixture(fdef).setUserData("Player");
-        playerBody.setLinearDamping(20f); 
-		// TODO Auto-generated constructor stub
+		cl = new MyContactListener();
+
+		Texture tex = invasorsHunt.res.getTexture("bunny");
+        TextureRegion[] sprites = TextureRegion.split(tex, 128/5, 32)[0];
+
+        setAnimation(sprites, 1 / 12f);
 	}
 	
 
@@ -57,37 +31,41 @@ public class Player{
             System.out.println("SPACE");
         }
         if(!MyInput.isDown(MyInput.BUTTON_D) && !MyInput.isDown(MyInput.BUTTON_W) && !MyInput.isDown(MyInput.BUTTON_A) && !MyInput.isDown(MyInput.BUTTON_S)) {
-            playerBody.setLinearVelocity(0,0);        	
+            body.setLinearVelocity(0,0);
+            animation.setWalk(false);
+        }
+        else {
+            animation.setWalk(true);
         }
         if(MyInput.isDown(MyInput.BUTTON_W)) {
-            playerBody.applyForceToCenter(0, 2, true);
+            body.setLinearVelocity(body.getLinearVelocity().x, 0.5f);
         }
         if(MyInput.isUp(MyInput.BUTTON_W)) {
-            playerBody.setLinearVelocity(playerBody.getLinearVelocity().x, 0);
+            body.setLinearVelocity(body.getLinearVelocity().x, 0);
         }
         if(MyInput.isDown(MyInput.BUTTON_S)){
-            playerBody.applyForceToCenter(0, -2, true);
+            body.setLinearVelocity(body.getLinearVelocity().x, -0.5f);
         }
         if(MyInput.isUp(MyInput.BUTTON_S)) {
-            playerBody.setLinearVelocity(playerBody.getLinearVelocity().x, 0);
+            body.setLinearVelocity(body.getLinearVelocity().x, 0);
         }
         if(MyInput.isDown(MyInput.BUTTON_A)){
             rightArm = true;
-            playerBody.applyForceToCenter(-2, 0, true);
+            body.setLinearVelocity(-0.5f, body.getLinearVelocity().y);
         }
         if(MyInput.isUp(MyInput.BUTTON_A)) {
-            playerBody.setLinearVelocity(0, playerBody.getLinearVelocity().y);
+            body.setLinearVelocity(0, body.getLinearVelocity().y);
         }
         if(MyInput.isDown(MyInput.BUTTON_D)){
             rightArm = false;
-            playerBody.applyForceToCenter(2, 0, true);
+            body.setLinearVelocity(0.5f, body.getLinearVelocity().y);
         }
         if(MyInput.isUp(MyInput.BUTTON_D)) {
-            playerBody.setLinearVelocity(0, playerBody.getLinearVelocity().y);
+            body.setLinearVelocity(0, body.getLinearVelocity().y);
         }
         if(MyInput.isPressed(MyInput.BUTTON_K)){
             if(cl.isPlayerOnContact()){
-            	punch.play(0.1f);
+                invasorsHunt.res.getSound("punch").play(0.1f);
                 if(cl.isLeftContact() && !rightArm) {
                     System.out.println("Punch Left!!");
                 }else if(cl.isRightContact() && rightArm){
@@ -98,31 +76,26 @@ public class Player{
                 }
                 return true;
             }else{
-            	miss.play(0.1f);
+                invasorsHunt.res.getSound("miss").play(0.1f);
                 System.out.println("Missed!!");
             }
         }
         return false;
     }
-    
-    public Body getBody() {
-    	return playerBody;
-    }
+
     
     public void setPlayerHits(){
         if(cl.isPlayerOnContact() && (cl.isLeftContact() || cl.isRightContact()))
             playerHits++;
         System.out.println(playerHits);
     }
-    
+
     public int getPlayerHits(){
         return playerHits;
     }
-    
 	public MyContactListener getContactListener () {
 		return cl;
 	}
-	
 	public boolean getRightArm () {
 		return rightArm;
 	}
@@ -131,8 +104,6 @@ public class Player{
 	}
 
     public void dispose() {
-    	punch.dispose();
-    	miss.dispose();
     }
     
 
