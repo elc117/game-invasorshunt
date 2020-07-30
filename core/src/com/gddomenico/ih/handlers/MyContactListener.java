@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Array;
 public class MyContactListener implements ContactListener {
 
     private int playerOnContact;
+    private int playerOnTheWall;
     private boolean rightContact;
     private boolean leftContact;
     public Array<Fixture> currentEnemy = new Array<Fixture>();
@@ -28,7 +29,18 @@ public class MyContactListener implements ContactListener {
             playerOnContact++;
             currentEnemy.add(fb);
         }
-
+        if(fa.getUserData() != null && fa.getUserData().equals("Border_Left")){
+            playerOnTheWall=1;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("Border_Left")){
+            playerOnTheWall=1;
+        }
+        if(fa.getUserData() != null && fa.getUserData().equals("Border_Right")){
+            playerOnTheWall=2;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("Border_Right")){
+            playerOnTheWall=2;
+        }
     }
 
     public void endContact(Contact c) {
@@ -58,10 +70,23 @@ public class MyContactListener implements ContactListener {
             leftContact = false;
             rightContact = false;
         }
+        if(fa.getUserData() != null && fa.getUserData().equals("Border_Left")){
+            playerOnTheWall=0;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("Border_Left")){
+            playerOnTheWall=0;
+        }
+        if(fa.getUserData() != null && fa.getUserData().equals("Border_Right")){
+            playerOnTheWall=0;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("Border_Right")){
+            playerOnTheWall=0;
+        }
     }
 
     public boolean isPlayerOnContact() { return playerOnContact > 0; }
 
+    public int isPlayerOnTheWall() { return playerOnTheWall; }
 
     public void preSolve(Contact c, Manifold m) {
 
