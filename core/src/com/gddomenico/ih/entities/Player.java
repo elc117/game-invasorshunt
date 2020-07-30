@@ -104,8 +104,10 @@ public class Player extends B2DSprite{
 
     
     public void setPlayerHits(){
-        if(cl.isPlayerOnContact())
-            playerHits += cl.getContacts();
+        
+        if(cl.isPlayerOnContact())        
+        playerHits += cl.getContacts();
+        
         System.out.println(playerHits);
     }
 
