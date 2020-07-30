@@ -5,6 +5,8 @@ import static com.gddomenico.ih.handlers.B2DVars.PLAYER_LIVES;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.gddomenico.ih.handlers.*;
@@ -22,13 +24,14 @@ public class Play extends GameState {
 
     private final OrthographicCamera b2dCam;
     
-    private static final int NUM_ENEMIES = 2;
+    private static final int NUM_ENEMIES = 5;
+
+    private TextureRegion[] lifeBar;
 
     private Player player;
     private Enemy[] enemyBody = new Enemy[NUM_ENEMIES];
 
     private float timer = 0;
-
     private float timeStop = 0;
 
     public Play(GameStateManager gsm) {
@@ -46,7 +49,23 @@ public class Play extends GameState {
         	enemyBody[i] = createEnemy();
 
         createBorder();
-      
+
+        int row = 11;
+        int column = 1;
+
+        Texture tex = invasorsHunt.res.getTexture("life");
+        TextureRegion[][] tmp = new TextureRegion(tex).split(
+                tex.getWidth() / column,
+                tex.getHeight() / row);
+
+        lifeBar = new TextureRegion[row*column];
+
+        int index = 0;
+        for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+                lifeBar[index++]=tmp[i][j];
+            }
+        }
         //set up b2d cam
         b2dCam = new OrthographicCamera();
         b2dCam.setToOrtho(false, invasorsHunt.V_WIDTH / PPM, invasorsHunt.V_HEIGHT / PPM);
@@ -56,6 +75,7 @@ public class Play extends GameState {
     }
 
     public void update(float dt) {
+
 
         if(!player.getStop()) {
             if (player.handleInput()) {
@@ -73,7 +93,7 @@ public class Play extends GameState {
     	player.update(dt);
            
         for(int i = 0; i < NUM_ENEMIES; i++)
-        	if (enemyBody[i].getHits() > -1)
+        	if (enemyBody[i].getPlayerHits() > -1)
         		enemyBody[i].FollowPlayer(player.getBody());
 
 
@@ -94,19 +114,11 @@ public class Play extends GameState {
         //Perdeu o jogo
         if(player.getPlayerHits()>=PLAYER_LIVES)
             gsm.setState(GameStateManager.END);
-
-
     }
 
     public void render() {
         //clear screen
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        sb.begin();
-
-        sb.draw(invasorsHunt.res.getTexture("background"), player.xWall, 0,600, invasorsHunt.V_HEIGHT);
-
-        sb.end();
 
         //Set a hit to the player every 4 seconds
         timer += Gdx.graphics.getDeltaTime();
@@ -114,7 +126,20 @@ public class Play extends GameState {
             player.setPlayerHits();
             timer = 0f;
         }
+
         sb.setProjectionMatrix(cam.combined);
+
+        int height = lifeBar[0].getRegionHeight();
+        int width = lifeBar[0].getRegionWidth();
+
+        sb.begin();
+        sb.draw(player.getPlayerHits() <= 10 ? lifeBar[player.getPlayerHits()] : lifeBar[10],
+                10,
+                invasorsHunt.V_HEIGHT - height + 10,
+                width / 2f,
+                height / 2f);
+        sb.end();
+
         player.render(sb);
 
         b2dr.render(world, b2dCam.combined);
@@ -145,7 +170,7 @@ public class Play extends GameState {
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
-        borderUpBody.createFixture(fdef).setUserData("Border_Up");
+        borderUpBody.createFixture(fdef).setUserData("Border_Down");
 
         //Border Up
         bdef.position.set(0 / PPM,invasorsHunt.V_HEIGHT / PPM);
@@ -157,7 +182,7 @@ public class Play extends GameState {
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
-        borderDownBody.createFixture(fdef).setUserData("Border_Left");
+        borderDownBody.createFixture(fdef).setUserData("Border_Up");
 
         //Border Left
         bdef.position.set(invasorsHunt.V_WIDTH / PPM,0 / PPM);
@@ -168,7 +193,7 @@ public class Play extends GameState {
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
-        borderLeftBody.createFixture(fdef).setUserData("Border_Down");
+        borderLeftBody.createFixture(fdef).setUserData("Border_Left");
 
         //Border Right
         bdef.position.set(invasorsHunt.V_WIDTH / PPM, invasorsHunt.V_HEIGHT / PPM);
@@ -183,12 +208,18 @@ public class Play extends GameState {
     }
 
     public void getBodiesToRemove(){
+        boolean punch = false;
 	    for(int i=0;i<NUM_ENEMIES;i++){
 	        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++)
-	        if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.get(j).getBody() && enemyBody[i].getHits() != -1){
+	        if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.get(j).getBody()
+                    && enemyBody[i].getPlayerHits() != -1
+                    && enemyBody[i].getSide() == !player.getRightArm()){
+	            punch = true;
 	        	enemyBody[i].setEnemyHits();
 	        }
 	    }
+	    if (punch) invasorsHunt.res.getSound("punch").play(0.1f);
+        else invasorsHunt.res.getSound("miss").play(0.1f);
 	}
 
 	public void createPlayer(){
@@ -237,6 +268,5 @@ public class Play extends GameState {
         return new Enemy(body);
     }
 
-    public void dispose() {
-    }
+    public void dispose() {}
 }

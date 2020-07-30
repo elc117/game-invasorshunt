@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 
 public class Enemy extends B2DSprite {
 
-	private int enemyHits = 0;
+	private boolean isOnRight;
 	
 	public Enemy (Body body) {
 	    super(body);
@@ -24,6 +24,8 @@ public class Enemy extends B2DSprite {
         float px = position.x - positionEnemy.x;
         float py = position.y - positionEnemy.y;
 
+        isOnRight = px > 0;
+
         float hipotenusa = (float) Math.sqrt((px * px) + (py * py));
 
         float cos = (px / hipotenusa) * 0.2f;
@@ -38,18 +40,18 @@ public class Enemy extends B2DSprite {
     }
 
     public void setEnemyHits() {
-    	enemyHits++;
+        playerHits++;
     }
     public void setEnemyHits(int hits) {
-    	enemyHits = hits;
+        playerHits = hits;
     }
 
-    public int getHits() {
-    	return enemyHits;
-    }
-
+    /**
+     * @return true if the enemy is on the right side of the player
+     */
+    public boolean getSide () { return isOnRight; }
     public boolean destroyEnemy() {
-        return enemyHits >= ENEMY_LIVES;
+        return playerHits >= ENEMY_LIVES;
     }
    
 }

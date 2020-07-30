@@ -62,6 +62,7 @@ public class Animation {
     }
 
     public TextureRegion getFrame() { return frames[currentFrame]; }
+    public TextureRegion getFrame(int frame) { return frames[frame]; }
     public void setWalk(boolean walk) { this.walk = walk; }
     public int getTimesPlayed() { return timesPlayed; }
     public boolean hasPlayedOnce() { return timesPlayed > 0; }
