@@ -66,17 +66,18 @@ public class Player extends B2DSprite{
         if(MyInput.isDown(MyInput.BUTTON_A)){
             rightArm = false;
             body.setLinearVelocity(-0.5f, body.getLinearVelocity().y);
-            if(cl.isPlayerOnTheWall() == 1)
+            if(cl.isPlayerOnTheWall() == 1 && xWall < 0)
                 xWall++;
             System.out.println(xWall);
         }
         if(MyInput.isUp(MyInput.BUTTON_A)) {
             body.setLinearVelocity(0, body.getLinearVelocity().y);
+
         }
         if(MyInput.isDown(MyInput.BUTTON_D)){
             rightArm = true;
             body.setLinearVelocity(0.5f, body.getLinearVelocity().y);
-            if(cl.isPlayerOnTheWall() == 2)
+            if(cl.isPlayerOnTheWall() == 2 && xWall > -280)
                 xWall--;
         }
         if(MyInput.isUp(MyInput.BUTTON_D)) {

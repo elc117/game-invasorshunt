@@ -168,14 +168,14 @@ public class Play extends GameState {
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderUpBody = world.createBody(bdef);
 
-        shape.setAsBox(invasorsHunt.V_WIDTH / PPM,0 / PPM);
+        shape.setAsBox(invasorsHunt.V_WIDTH / PPM,30 / PPM);
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
         borderUpBody.createFixture(fdef).setUserData("Border_Up");
 
         //Border Left
-        bdef.position.set(0 / PPM,invasorsHunt.V_HEIGHT / PPM);
+        bdef.position.set(10 / PPM,invasorsHunt.V_HEIGHT / PPM);
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderDownBody = world.createBody(bdef);
         
@@ -191,7 +191,7 @@ public class Play extends GameState {
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderLeftBody = world.createBody(bdef);
 
-        shape.setAsBox(invasorsHunt.V_WIDTH / PPM,0 / PPM);
+        shape.setAsBox(invasorsHunt.V_WIDTH / PPM,10 / PPM);
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
@@ -202,7 +202,7 @@ public class Play extends GameState {
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderRightBody = world.createBody(bdef);
 
-        shape.setAsBox(0 / PPM,invasorsHunt.V_HEIGHT  / PPM);
+        shape.setAsBox(10 / PPM,invasorsHunt.V_HEIGHT  / PPM);
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
