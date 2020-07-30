@@ -85,7 +85,7 @@ public class Player extends B2DSprite{
 
     
     public void setPlayerHits(){
-        if(cl.isPlayerOnContact() && (cl.isLeftContact() || cl.isRightContact()))
+        if(cl.isPlayerOnContact())
             playerHits++;
         System.out.println(playerHits);
     }
