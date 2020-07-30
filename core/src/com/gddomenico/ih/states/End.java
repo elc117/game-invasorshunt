@@ -25,7 +25,7 @@ public class End extends GameState {
 
         currentItem = 0;
 
-        titleFont = new BitmapFont(Gdx.files.internal("font.fnt"));
+        titleFont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
 
         //titleFont.setColor(Color.WHITE);
 

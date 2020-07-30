@@ -1,6 +1,7 @@
 package com.gddomenico.ih.states;
 
 import static com.gddomenico.ih.handlers.B2DVars.PPM;
+import static com.gddomenico.ih.handlers.B2DVars.PLAYER_LIVES;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -28,6 +29,8 @@ public class Play extends GameState {
 
     private float timer = 0;
 
+    private float timeStop = 0;
+
     public Play(GameStateManager gsm) {
         super(gsm);
         
@@ -53,13 +56,26 @@ public class Play extends GameState {
     }
 
     public void update(float dt) {
-        
-    	if (player.handleInput()) getBodiesToRemove();
+
+
+        if(!player.getStop()) {
+            if (player.handleInput()) {
+                getBodiesToRemove();
+            }
+        }
+        else {
+            timeStop += dt;
+            if(timeStop >= Player.delay) {
+                player.setStop(false);
+                timeStop = 0f;
+            }
+        }
+
     	player.update(dt);
            
-        for(int i = 0; i < NUM_ENEMIES; i++)
-        	if (enemyBody[i].getHits() > -1)
-        		enemyBody[i].FollowPlayer(player.getBody());
+        //for(int i = 0; i < NUM_ENEMIES; i++)
+        //	if (enemyBody[i].getHits() > -1)
+        //		enemyBody[i].FollowPlayer(player.getBody());
 
 
         world.step(dt, 6, 2);
@@ -77,7 +93,7 @@ public class Play extends GameState {
         }
 
         //Perdeu o jogo
-        if(player.getPlayerHits()==10)
+        if(player.getPlayerHits()>=PLAYER_LIVES)
             gsm.setState(GameStateManager.END);
     }
 
@@ -161,10 +177,9 @@ public class Play extends GameState {
 
     public void getBodiesToRemove(){
 	    for(int i=0;i<NUM_ENEMIES;i++){
-	        if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.getBody()){
+	        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++)
+	        if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.get(j).getBody() && enemyBody[i].getHits() != -1){
 	        	enemyBody[i].setEnemyHits();
-	        	
-	            return;
 	        }
 	    }
 	}
@@ -191,8 +206,9 @@ public class Play extends GameState {
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
 
+        //bdef.position.set(180 / PPM,(130) / PPM);
         bdef.position.set((100+getRand(getRand(-50,50),200)) / PPM,(120+getRand(getRand(-50,50),100)) / PPM);
-        bdef.type = BodyDef.BodyType.KinematicBody;
+        bdef.type = BodyDef.BodyType.DynamicBody;
         Body body = world.createBody(bdef);
         body.setGravityScale(0f);
 
@@ -201,6 +217,7 @@ public class Play extends GameState {
         //to change the category
         fdef.filter.categoryBits = B2DVars.BIT_ENEMY;
         fdef.filter.maskBits = B2DVars.BIT_ENEMY;
+        fdef.isSensor = true;
         body.createFixture(fdef).setUserData("Enemy");
 
         // create a foot sensor
