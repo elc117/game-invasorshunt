@@ -21,7 +21,7 @@ public class Play extends GameState {
 
     private final OrthographicCamera b2dCam;
     
-    private static final int NUM_ENEMIES = 5;
+    private static final int NUM_ENEMIES = 2;
 
     private Player player;
     private Enemy[] enemyBody = new Enemy[NUM_ENEMIES];

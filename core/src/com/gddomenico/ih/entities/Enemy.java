@@ -37,7 +37,7 @@ public class Enemy extends B2DSprite {
         float sin = (py / hipotenusa) * 0.2f;
         System.out.println("Body: " + body);
         System.out.println("hipo: " + hipotenusa);
-        if(hipotenusa > 0.120 && hipotenusa < 0.125)
+        if(hipotenusa > 0.120 && hipotenusa < 0.15)
             body.setLinearVelocity(0, 0);
         else
             body.setLinearVelocity(cos, sin);
