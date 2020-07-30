@@ -133,11 +133,13 @@ public class Play extends GameState {
         int width = lifeBar[0].getRegionWidth();
 
         sb.begin();
+        sb.draw(invasorsHunt.res.getTexture("background"), player.xWall, 0,600, invasorsHunt.V_HEIGHT);
         sb.draw(player.getPlayerHits() <= 10 ? lifeBar[player.getPlayerHits()] : lifeBar[10],
                 10,
                 invasorsHunt.V_HEIGHT - height + 10,
                 width / 2f,
                 height / 2f);
+
         sb.end();
 
         player.render(sb);
@@ -161,7 +163,7 @@ public class Play extends GameState {
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
 
-        //Border Down
+        //Border Up
         bdef.position.set(invasorsHunt.V_WIDTH / PPM,invasorsHunt.V_HEIGHT / PPM);
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderUpBody = world.createBody(bdef);
@@ -170,9 +172,9 @@ public class Play extends GameState {
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
-        borderUpBody.createFixture(fdef).setUserData("Border_Down");
+        borderUpBody.createFixture(fdef).setUserData("Border_Up");
 
-        //Border Up
+        //Border Left
         bdef.position.set(0 / PPM,invasorsHunt.V_HEIGHT / PPM);
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderDownBody = world.createBody(bdef);
@@ -182,9 +184,9 @@ public class Play extends GameState {
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
-        borderDownBody.createFixture(fdef).setUserData("Border_Up");
+        borderDownBody.createFixture(fdef).setUserData("Border_Left");
 
-        //Border Left
+        //Border Down
         bdef.position.set(invasorsHunt.V_WIDTH / PPM,0 / PPM);
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderLeftBody = world.createBody(bdef);
@@ -193,7 +195,7 @@ public class Play extends GameState {
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
-        borderLeftBody.createFixture(fdef).setUserData("Border_Left");
+        borderLeftBody.createFixture(fdef).setUserData("Border_Down");
 
         //Border Right
         bdef.position.set(invasorsHunt.V_WIDTH / PPM, invasorsHunt.V_HEIGHT / PPM);
