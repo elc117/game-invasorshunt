@@ -1,16 +1,9 @@
 package com.gddomenico.ih.entities;
 
-import static com.gddomenico.ih.handlers.B2DVars.PPM;
-
-import java.util.Random;
+import static com.gddomenico.ih.handlers.B2DVars.ENEMY_LIVES;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.gddomenico.ih.handlers.B2DVars;
 
 public class Enemy extends B2DSprite {
 
@@ -36,7 +29,9 @@ public class Enemy extends B2DSprite {
         float cos = (px / hipotenusa) * 0.2f;
         float sin = (py / hipotenusa) * 0.2f;
 
-        if(hipotenusa < 0.15)
+        //System.out.println("hipot: " + hipotenusa);
+
+        if(hipotenusa < 0.1)
             body.setLinearVelocity(0, 0);
         else
             body.setLinearVelocity(cos, sin);
@@ -54,7 +49,7 @@ public class Enemy extends B2DSprite {
     }
 
     public boolean destroyEnemy() {
-        return enemyHits >= 5;
+        return enemyHits >= ENEMY_LIVES;
     }
    
 }

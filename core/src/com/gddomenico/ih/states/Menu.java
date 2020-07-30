@@ -17,10 +17,10 @@ import com.gddomenico.ih.invasorsHunt;
 
 public class Menu extends GameState {
 
-    private BitmapFont titleFont;
-    private BitmapFont font;
+    private final BitmapFont titleFont;
+    private final BitmapFont font;
 
-    private final String title = "Ivasors Hunt";
+    private final static String title = "Ivasors Hunt";
     
     private int currentItem = 0;
     private String[] menuItems;
@@ -68,13 +68,13 @@ public class Menu extends GameState {
         	select();
         }
     	
-    };
+    }
     
     public void update(float dt) {
     	
     	handleInput();
     			
-    };
+    }
     
 
     public void render() {
@@ -115,8 +115,9 @@ public class Menu extends GameState {
     	
     	sb.end();
     			
-    };
+    }
+
     public void dispose() {
 		invasorsHunt.res.getMusic("menu").stop();
-    };
+    }
 }

@@ -8,4 +8,7 @@ public class B2DVars {
     public static final short  BIT_BORDER = 3;
     public static final short  BIT_ENEMY = 2;
     public static final short  BIT_PLAYER = 1;
+
+    public static final short ENEMY_LIVES = 500;
+    public static final short PLAYER_LIVES = 500;
 }
