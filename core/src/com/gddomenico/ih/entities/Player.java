@@ -10,17 +10,34 @@ import com.gddomenico.ih.invasorsHunt;
 public class Player extends B2DSprite{
 
     private Integer playerHits = 0;
-    private boolean rightArm = false;
 
     private final MyContactListener cl;
+
+    public static final float delay = 1 / 6f;
+    private boolean stop = false;
 
 	public Player(Body body) {
 		super(body);
 
 		cl = new MyContactListener();
 
+		int column = 5;
+		int row = 2;
+
 		Texture tex = invasorsHunt.res.getTexture("bunny");
-        TextureRegion[] sprites = TextureRegion.split(tex, 128/5, 32)[0];
+        TextureRegion[][] tmp = new TextureRegion(tex).split(
+                tex.getWidth() / column,
+                tex.getHeight() / row);
+
+        TextureRegion[] sprites = new TextureRegion[column*row];
+
+        int index = 0;
+
+        for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+                sprites[index++]=tmp[i][j];
+            }
+        }
 
         setAnimation(sprites, 1 / 12f);
 	}
@@ -50,20 +67,22 @@ public class Player extends B2DSprite{
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
         }
         if(MyInput.isDown(MyInput.BUTTON_A)){
-            rightArm = true;
+            rightArm = false;
             body.setLinearVelocity(-0.5f, body.getLinearVelocity().y);
         }
         if(MyInput.isUp(MyInput.BUTTON_A)) {
             body.setLinearVelocity(0, body.getLinearVelocity().y);
         }
         if(MyInput.isDown(MyInput.BUTTON_D)){
-            rightArm = false;
+            rightArm = true;
             body.setLinearVelocity(0.5f, body.getLinearVelocity().y);
         }
         if(MyInput.isUp(MyInput.BUTTON_D)) {
             body.setLinearVelocity(0, body.getLinearVelocity().y);
         }
         if(MyInput.isPressed(MyInput.BUTTON_K)){
+            body.setLinearVelocity(0,0);
+            stop = true;
             if(cl.isPlayerOnContact()){
                 invasorsHunt.res.getSound("punch").play(0.1f);
                 if(cl.isLeftContact() && !rightArm) {
@@ -72,7 +91,7 @@ public class Player extends B2DSprite{
                     System.out.println("Punch Right!!");
                 }
                 else {
-                	System.out.println("Punch somewhere else");
+                    System.out.println("left: "+cl.isLeftContact()+"\nright:"+cl.isRightContact()+"\narmRight: "+rightArm);
                 }
                 return true;
             }else{
@@ -85,8 +104,8 @@ public class Player extends B2DSprite{
 
     
     public void setPlayerHits(){
-        if(cl.isPlayerOnContact() && (cl.isLeftContact() || cl.isRightContact()))
-            playerHits++;
+        if(cl.isPlayerOnContact())
+            playerHits += cl.getContacts();
         System.out.println(playerHits);
     }
 
@@ -102,6 +121,8 @@ public class Player extends B2DSprite{
 	public void setRightArm (boolean right) {
 		rightArm = right;
 	}
+    public boolean getStop() { return stop;}
+    public void setStop(boolean stop) { this.stop = stop;}
 
     public void dispose() {
     }

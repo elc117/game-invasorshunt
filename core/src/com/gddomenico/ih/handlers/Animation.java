@@ -47,7 +47,6 @@ public class Animation {
     public void update(float dt) {
         if(delay <= 0) return;
         time += dt;
-        System.out.println(dt);
         while(time >= delay) {
             step();
         }

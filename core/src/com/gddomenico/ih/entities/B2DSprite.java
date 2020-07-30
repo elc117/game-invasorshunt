@@ -12,6 +12,8 @@ import static com.gddomenico.ih.handlers.B2DVars.PPM;
  */
 public class B2DSprite {
 
+    protected boolean rightArm = false;
+
     protected Body body;
     protected Animation animation;
     protected float width;
@@ -37,8 +39,18 @@ public class B2DSprite {
     }
 
     public void render(SpriteBatch sb) {
+
+        // flip sprite
+        boolean flip = (rightArm == true);
+        //spriteBatch.draw(currentFrame, flip ? x+width : x, y, flip ? -width : width, height);
+        //sb.draw(animation.getFrame(), (body.getPosition().x * PPM - width / 2), (int) (body.getPosition().y * PPM - height / 2));
+
         sb.begin();
-        sb.draw(animation.getFrame(), (body.getPosition().x * PPM - width / 2), (int) (body.getPosition().y * PPM - height / 2));
+        sb.draw(animation.getFrame(),
+                flip ? (body.getPosition().x * PPM - width / 2) : (body.getPosition().x * PPM + width / 2),
+                (int) (body.getPosition().y * PPM - height / 2),
+                flip ? width : -width,
+                height);
         sb.end();
     }
 
