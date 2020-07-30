@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.gddomenico.ih.handlers.Content;
 import com.gddomenico.ih.handlers.GameStateManager;
 import com.gddomenico.ih.handlers.MyInput;
 import com.gddomenico.ih.handlers.MyInputProcessor;
 
 public class invasorsHunt extends ApplicationAdapter {
+
 	SpriteBatch batch;
 	Texture img;
 
@@ -28,10 +30,24 @@ public class invasorsHunt extends ApplicationAdapter {
 
 	private GameStateManager gsm;
 
+	public static Content res;
+
 	@Override
 	public void create () {
 
 		Gdx.input.setInputProcessor(new MyInputProcessor());
+
+		res = new Content();
+
+		res.loadSound("sounds/punch.wav", "punch");
+		res.loadSound("sounds/missed.wav", "miss");
+
+		res.loadMusic("sounds/menu.wav","menu");
+		res.getMusic("menu").setLooping(false);
+		res.getMusic("menu").setVolume(0.2f);
+
+		res.loadTexture("images/badlogic.jpg","menu");
+		res.loadTexture("images/bunny.png", "bunny");
 
 		sb = new SpriteBatch();
 		cam = new OrthographicCamera();
@@ -59,7 +75,7 @@ public class invasorsHunt extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
-
+		res.removeAll();
 	}
 
 	public SpriteBatch getSpriteBatch() { return sb; }

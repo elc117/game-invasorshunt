@@ -9,42 +9,31 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.gddomenico.ih.handlers.Content;
 import com.gddomenico.ih.handlers.GameStateManager;
 import com.gddomenico.ih.handlers.MyInput;
 import com.gddomenico.ih.states.GameState;
 import com.gddomenico.ih.invasorsHunt;
 
 public class Menu extends GameState {
-	
+
     private BitmapFont titleFont;
     private BitmapFont font;
-    
-	private Texture img;
 
     private final String title = "Ivasors Hunt";
     
-    private Music music;
-    
-    private int currentItem;
+    private int currentItem = 0;
     private String[] menuItems;
     
     public Menu(GameStateManager gsm) {
         super(gsm);
 
-		img = new Texture("badlogic.jpg");
-        
-        currentItem = 0;
-        
-        titleFont = new BitmapFont(Gdx.files.internal("font.fnt"));
+        titleFont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
 
-        music = Gdx.audio.newMusic(Gdx.files.internal("menu.wav"));        
-        music.setLooping(false);
-        music.setVolume(0.2f);
-        music.play();
-        
-        font = new BitmapFont(Gdx.files.internal("font.fnt"));
+        font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
         font.getData().setScale((float) (invasorsHunt.SCALE/4f));
-    	
+
+		invasorsHunt.res.getMusic("menu").play();
         
         menuItems = new String[] {
         	"Jogar",
@@ -98,9 +87,9 @@ public class Menu extends GameState {
     	
     	sb.begin();
     	
-		sb.draw(img, 0, 0,invasorsHunt.V_WIDTH, invasorsHunt.V_HEIGHT);  	
-    	
-    	
+		sb.draw(invasorsHunt.res.getTexture("menu"), 0, 0,invasorsHunt.V_WIDTH, invasorsHunt.V_HEIGHT);
+
+
     	titleFont.draw(
 			sb, 
 			title, 
@@ -113,7 +102,7 @@ public class Menu extends GameState {
         	width = layout.width;
     		if(currentItem == i) font.setColor(Color.RED);
     		else font.setColor(Color.WHITE);
-        	
+
         	font.draw(
     			sb, 
     			menuItems[i], 
@@ -128,7 +117,6 @@ public class Menu extends GameState {
     			
     };
     public void dispose() {
-    	img.dispose();
-    	music.dispose();
+		invasorsHunt.res.getMusic("menu").stop();
     };
 }
