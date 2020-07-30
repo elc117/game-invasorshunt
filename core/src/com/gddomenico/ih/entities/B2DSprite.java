@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.gddomenico.ih.handlers.Animation;
+import com.sun.corba.se.impl.ior.ObjectAdapterIdNumber;
+
 import static com.gddomenico.ih.handlers.B2DVars.PPM;
 
 /**
@@ -12,12 +14,15 @@ import static com.gddomenico.ih.handlers.B2DVars.PPM;
  */
 public class B2DSprite {
 
+    protected Integer playerHits = 0;
+
     protected boolean rightArm = false;
 
     protected Body body;
     protected Animation animation;
     protected float width;
     protected float height;
+
 
     public B2DSprite(Body body) {
         this.body = body;
@@ -41,7 +46,7 @@ public class B2DSprite {
     public void render(SpriteBatch sb) {
 
         // flip sprite
-        boolean flip = (rightArm == true);
+        boolean flip = rightArm;
         //spriteBatch.draw(currentFrame, flip ? x+width : x, y, flip ? -width : width, height);
         //sb.draw(animation.getFrame(), (body.getPosition().x * PPM - width / 2), (int) (body.getPosition().y * PPM - height / 2));
 
@@ -58,5 +63,16 @@ public class B2DSprite {
     public Vector2 getPosition() { return body.getPosition(); }
     public float getWidth() { return width; }
     public float getHeight() { return height; }
+
+    public int getPlayerHits(){
+        return playerHits;
+    }
+
+    public boolean getRightArm () {
+        return rightArm;
+    }
+    public void setRightArm (boolean right) {
+        rightArm = right;
+    }
 
 }
