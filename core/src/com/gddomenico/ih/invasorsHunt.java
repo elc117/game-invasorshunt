@@ -48,8 +48,9 @@ public class invasorsHunt extends ApplicationAdapter {
 
 		res.loadTexture("images/background2.png","background2");
 		res.loadTexture("images/background.jpg","background");
-		res.loadTexture("images/badlogic.jpg","menu");
+		res.loadTexture("images/badlogic.png","menu");
 		res.loadTexture("images/bunny.png", "bunny");
+		res.loadTexture("images/slime.png", "slime");
 		res.loadTexture("images/lives.png", "life");
 
 		sb = new SpriteBatch();

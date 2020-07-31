@@ -2,9 +2,12 @@ package com.gddomenico.ih.entities;
 
 import static com.gddomenico.ih.handlers.B2DVars.ENEMY_LIVES;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.gddomenico.ih.handlers.MyInput;
+import com.gddomenico.ih.invasorsHunt;
 
 public class Enemy extends B2DSprite {
 
@@ -12,6 +15,25 @@ public class Enemy extends B2DSprite {
 	
 	public Enemy (Body body) {
 	    super(body);
+
+        int column = 4;
+        int row = 2;
+
+        Texture tex = invasorsHunt.res.getTexture("slime");
+        TextureRegion[][] tmp = new TextureRegion(tex).split(
+                tex.getWidth() / column,
+                tex.getHeight() / row);
+
+        TextureRegion[] sprites = new TextureRegion[column*row];
+
+        int index = 0;
+        for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+                sprites[index++]=tmp[i][j];
+            }
+        }
+        setAnimation(sprites, 1 / 12f);
+        animation.setWalk(true);
 	}
 
 	/**
@@ -47,7 +69,6 @@ public class Enemy extends B2DSprite {
                     body.setLinearVelocity(cos*-2, sin);
                 else
                     body.setLinearVelocity(cos*-1, 0);
-
             }
 
             else

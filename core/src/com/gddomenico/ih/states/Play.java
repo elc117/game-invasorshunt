@@ -98,13 +98,12 @@ public class Play extends GameState {
     	player.update(dt);
            
         for(int i = 0; i < NUM_ENEMIES; i++)
-        	if (enemyBody[i].getPlayerHits() > -1)
-        		enemyBody[i].FollowPlayer(player.getBody(), player.getContactListener().isPlayerOnTheWall(), player.xWall);
-
+        	if (enemyBody[i].getPlayerHits() > -1) {
+                enemyBody[i].FollowPlayer(player.getBody(), player.getContactListener().isPlayerOnTheWall(), player.xWall);
+        	    enemyBody[i].update(dt);
+            }
 
         world.step(dt, 6, 2);
-
-
 
         for(int i=0;i<NUM_ENEMIES;i++){
             if(enemyBody[i].destroyEnemy()){
@@ -145,15 +144,14 @@ public class Play extends GameState {
                 invasorsHunt.V_HEIGHT - height + 10,
                 width / 2f,
                 height / 2f);
-
-        sb.end();
-
-        player.render(sb);
-
-        sb.begin();
         sb.draw(invasorsHunt.res.getTexture("background2"), player.xWall, 0,600, invasorsHunt.V_HEIGHT);
         sb.end();
 
+
+        for(int i = 0; i < NUM_ENEMIES; i++)
+            if (enemyBody[i].getPlayerHits() > -1)
+                enemyBody[i].render(sb);
+        player.render(sb);
 
         b2dr.render(world, b2dCam.combined);
     }
