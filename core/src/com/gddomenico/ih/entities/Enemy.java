@@ -41,10 +41,13 @@ public class Enemy extends B2DSprite {
             if(((onWall == 1 || onWall == 2) &&
                (MyInput.isDown(MyInput.BUTTON_D) || MyInput.isDown(MyInput.BUTTON_A))) &&
                 (edgeMap != -280 && edgeMap != 0)){
-                if(cos > 0)
-                    body.setLinearVelocity(cos*-1, 0);
-                else if(cos < 0)
+                if(cos < 0 && onWall == 2)
                     body.setLinearVelocity(cos*2, sin);
+                else if(cos > 0 &&onWall == 1)
+                    body.setLinearVelocity(cos*-2, sin);
+                else
+                    body.setLinearVelocity(cos*-1, 0);
+
             }
 
             else

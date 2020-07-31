@@ -258,7 +258,7 @@ public class Play extends GameState {
         FixtureDef fdef = new FixtureDef();
 
         //bdef.position.set(180 / PPM,(130) / PPM);
-        bdef.position.set(((100+getRand(0,300))*dist) / PPM,((getRand(0,80))) / PPM);
+        bdef.position.set(((400+getRand(-300,300))*dist) / PPM,((getRand(0,80))) / PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         Body body = world.createBody(bdef);
         body.setGravityScale(0f);
