@@ -68,7 +68,6 @@ public class Player extends B2DSprite{
             body.setLinearVelocity(-0.5f, body.getLinearVelocity().y);
             if(cl.isPlayerOnTheWall() == 1 && xWall < 0)
                 xWall++;
-            System.out.println(xWall);
         }
         if(MyInput.isUp(MyInput.BUTTON_A)) {
             body.setLinearVelocity(0, body.getLinearVelocity().y);

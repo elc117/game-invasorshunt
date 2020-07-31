@@ -94,11 +94,12 @@ public class Play extends GameState {
            
         for(int i = 0; i < NUM_ENEMIES; i++)
         	if (enemyBody[i].getPlayerHits() > -1)
-        		enemyBody[i].FollowPlayer(player.getBody());
+        		enemyBody[i].FollowPlayer(player.getBody(), player.getContactListener().isPlayerOnTheWall(), player.xWall);
 
 
         world.step(dt, 6, 2);
-        
+
+
 
         for(int i=0;i<NUM_ENEMIES;i++){
             if(enemyBody[i].destroyEnemy()){

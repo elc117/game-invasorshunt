@@ -4,6 +4,7 @@ import static com.gddomenico.ih.handlers.B2DVars.ENEMY_LIVES;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.gddomenico.ih.handlers.MyInput;
 
 public class Enemy extends B2DSprite {
 
@@ -16,7 +17,7 @@ public class Enemy extends B2DSprite {
 	/**
      * Follow the player in the given parameter
 	 */
-    public void FollowPlayer (Body player) {
+    public void FollowPlayer (Body player, Integer onWall, Integer edgeMap) {
 
         Vector2 position = player.getPosition();
         Vector2 positionEnemy = body.getPosition();
@@ -36,7 +37,16 @@ public class Enemy extends B2DSprite {
         if(hipotenusa < 0.1)
             body.setLinearVelocity(0, 0);
         else
-            body.setLinearVelocity(cos, sin);
+            //First check if is player on the wall, then check if the player is pressing to move and final check if there is still map to move
+            if(((onWall == 1 || onWall == 2) &&
+               (MyInput.isDown(MyInput.BUTTON_D) || MyInput.isDown(MyInput.BUTTON_A))) &&
+                (edgeMap != -280 && edgeMap != 0))
+                body.setLinearVelocity(cos*-1, 0);
+            else
+                body.setLinearVelocity(cos, sin);
+
+
+
     }
 
     public void setEnemyHits() {
