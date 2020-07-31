@@ -31,9 +31,11 @@ public class MyContactListener implements ContactListener {
         }
         if(fa.getUserData() != null && fa.getUserData().equals("Border_Left")){
             playerOnTheWall=1;
+            System.out.println("LEFT");
         }
         if(fb.getUserData() != null && fb.getUserData().equals("Border_Left")){
             playerOnTheWall=1;
+            System.out.println("LEFT");
         }
         if(fa.getUserData() != null && fa.getUserData().equals("Border_Right")){
             playerOnTheWall=2;

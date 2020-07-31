@@ -9,8 +9,6 @@ import com.gddomenico.ih.invasorsHunt;
 
 public class Player extends B2DSprite{
 
-    private Integer playerHits = 0;
-
     private final MyContactListener cl;
 
     public int xWall = -100; //moves the background in the X axis
@@ -33,13 +31,11 @@ public class Player extends B2DSprite{
         TextureRegion[] sprites = new TextureRegion[column*row];
 
         int index = 0;
-
         for (int i=0; i<row; i++) {
             for (int j=0; j<column; j++) {
                 sprites[index++]=tmp[i][j];
             }
         }
-
         setAnimation(sprites, 1 / 12f);
 	}
 	
@@ -72,17 +68,16 @@ public class Player extends B2DSprite{
             body.setLinearVelocity(-0.5f, body.getLinearVelocity().y);
             if(cl.isPlayerOnTheWall() == 1 && xWall < 0)
                 xWall++;
-            System.out.println(xWall);
         }
         if(MyInput.isUp(MyInput.BUTTON_A)) {
             body.setLinearVelocity(0, body.getLinearVelocity().y);
+
         }
         if(MyInput.isDown(MyInput.BUTTON_D)){
             rightArm = true;
             body.setLinearVelocity(0.5f, body.getLinearVelocity().y);
             if(cl.isPlayerOnTheWall() == 2 && xWall > -280)
                 xWall--;
-
         }
         if(MyInput.isUp(MyInput.BUTTON_D)) {
             body.setLinearVelocity(0, body.getLinearVelocity().y);
@@ -91,14 +86,13 @@ public class Player extends B2DSprite{
             body.setLinearVelocity(0,0);
             stop = true;
             if(cl.isPlayerOnContact()){
-                invasorsHunt.res.getSound("punch").play(0.1f);
                 if(cl.isLeftContact() && !rightArm) {
                     System.out.println("Punch Left!!");
                 }else if(cl.isRightContact() && rightArm){
                     System.out.println("Punch Right!!");
                 }
                 else {
-                    System.out.println("left: "+cl.isLeftContact()+"\nright:"+cl.isRightContact()+"\narmRight: "+rightArm);
+                    //System.out.println("left: "+cl.isLeftContact()+"\nright:"+cl.isRightContact()+"\narmRight: "+rightArm);
                 }
                 return true;
             }else{
@@ -111,24 +105,13 @@ public class Player extends B2DSprite{
 
     
     public void setPlayerHits(){
-        
-        if(cl.isPlayerOnContact())        
-        playerHits += cl.getContacts();
-        
+        if(cl.isPlayerOnContact())
+            playerHits += cl.getContacts();
         System.out.println(playerHits);
     }
 
-    public int getPlayerHits(){
-        return playerHits;
-    }
 	public MyContactListener getContactListener () {
 		return cl;
-	}
-	public boolean getRightArm () {
-		return rightArm;
-	}
-	public void setRightArm (boolean right) {
-		rightArm = right;
 	}
     public boolean getStop() { return stop;}
     public void setStop(boolean stop) { this.stop = stop;}
