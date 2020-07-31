@@ -145,6 +145,11 @@ public class Play extends GameState {
 
         player.render(sb);
 
+        sb.begin();
+        sb.draw(invasorsHunt.res.getTexture("background2"), player.xWall, 0,600, invasorsHunt.V_HEIGHT);
+        sb.end();
+
+
         b2dr.render(world, b2dCam.combined);
     }
 
