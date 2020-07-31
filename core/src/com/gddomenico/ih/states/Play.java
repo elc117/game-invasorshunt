@@ -24,7 +24,7 @@ public class Play extends GameState {
 
     private final OrthographicCamera b2dCam;
     
-    private static final int NUM_ENEMIES = 5;
+    private static final int NUM_ENEMIES = 40;
 
     private TextureRegion[] lifeBar;
 
@@ -44,9 +44,14 @@ public class Play extends GameState {
         world.setContactListener(player.getContactListener());
 
         b2dr = new Box2DDebugRenderer();
+        //It's going to receive the number to make the enemy spawn more far from the main
+        Integer aux=1;
+        for(int i = 0; i < enemyBody.length; i++){
+            enemyBody[i] = createEnemy(aux);
+            if(i % 10 == 0)
+                aux++;
+        }
 
-        for(int i = 0; i < enemyBody.length; i++)
-        	enemyBody[i] = createEnemy();
 
         createBorder();
 
@@ -174,7 +179,7 @@ public class Play extends GameState {
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderUpBody = world.createBody(bdef);
 
-        shape.setAsBox(invasorsHunt.V_WIDTH / PPM,30 / PPM);
+        shape.setAsBox(invasorsHunt.V_WIDTH / PPM,80 / PPM);
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
@@ -247,13 +252,13 @@ public class Play extends GameState {
 
         player = new Player(body);
     }
-    public Enemy createEnemy(){
+    public Enemy createEnemy(Integer dist){
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
 
         //bdef.position.set(180 / PPM,(130) / PPM);
-        bdef.position.set((100+getRand(getRand(-50,50),200)) / PPM,(120+getRand(getRand(-50,50),100)) / PPM);
+        bdef.position.set(((100+getRand(0,300))*dist) / PPM,((getRand(0,80))) / PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         Body body = world.createBody(bdef);
         body.setGravityScale(0f);

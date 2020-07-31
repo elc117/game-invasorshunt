@@ -40,8 +40,13 @@ public class Enemy extends B2DSprite {
             //First check if is player on the wall, then check if the player is pressing to move and final check if there is still map to move
             if(((onWall == 1 || onWall == 2) &&
                (MyInput.isDown(MyInput.BUTTON_D) || MyInput.isDown(MyInput.BUTTON_A))) &&
-                (edgeMap != -280 && edgeMap != 0))
-                body.setLinearVelocity(cos*-1, 0);
+                (edgeMap != -280 && edgeMap != 0)){
+                if(cos > 0)
+                    body.setLinearVelocity(cos*-1, 0);
+                else if(cos < 0)
+                    body.setLinearVelocity(cos*2, sin);
+            }
+
             else
                 body.setLinearVelocity(cos, sin);
 
