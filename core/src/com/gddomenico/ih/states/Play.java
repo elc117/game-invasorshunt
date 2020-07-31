@@ -6,6 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -24,20 +26,27 @@ public class Play extends GameState {
 
     private final OrthographicCamera b2dCam;
     
-    private static final int NUM_ENEMIES = 40;
+    private static final int NUM_ENEMIES = 50;
+    private int activeEnemies = 5;
+    private int destroyedEnemies = 0;
 
-    private TextureRegion[] lifeBar;
+    private final TextureRegion[] lifeBar;
+    private final BitmapFont enemiesIterator;
 
     private Player player;
-    private Enemy[] enemyBody = new Enemy[NUM_ENEMIES];
+    private final Enemy[] enemyBody = new Enemy[NUM_ENEMIES];
 
     private float timer = 0;
     private float timeStop = 0;
 
     public Play(GameStateManager gsm) {
         super(gsm);
-        
+
+        //invasorsHunt.res.getMusic("play").play();
+
         world = new World(new Vector2(0, 0), true);
+        enemiesIterator = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
+        enemiesIterator.getData().setScale((float) (invasorsHunt.SCALE/4f));
         
         createPlayer();
 
@@ -45,11 +54,8 @@ public class Play extends GameState {
 
         b2dr = new Box2DDebugRenderer();
         //It's going to receive the number to make the enemy spawn more far from the main
-        Integer aux=1;
-        for(int i = 0; i < enemyBody.length; i++){
-            enemyBody[i] = createEnemy(aux);
-            if(i % 10 == 0)
-                aux++;
+        for(int i = 0; i < activeEnemies; i++){
+            enemyBody[i] = createEnemy(2);
         }
 
 
@@ -81,6 +87,16 @@ public class Play extends GameState {
 
     public void update(float dt) {
 
+        //Set a hit to the player every 4 seconds
+        timer += Gdx.graphics.getDeltaTime();
+        if (timer >= 3.420f) {
+            player.setPlayerHits();
+            if(activeEnemies < NUM_ENEMIES) {
+                enemyBody[activeEnemies] = createEnemy(2);
+                activeEnemies++;
+            }
+            timer = 0f;
+        }
 
         if(!player.getStop()) {
             if (player.handleInput()) {
@@ -96,46 +112,47 @@ public class Play extends GameState {
         }
 
     	player.update(dt);
-           
-        for(int i = 0; i < NUM_ENEMIES; i++)
+        for(int i = 0; i < activeEnemies; i++)
         	if (enemyBody[i].getPlayerHits() > -1) {
                 enemyBody[i].FollowPlayer(player.getBody(), player.getContactListener().isPlayerOnTheWall(), player.xWall);
         	    enemyBody[i].update(dt);
             }
 
-        world.step(dt, 6, 2);
-
-        for(int i=0;i<NUM_ENEMIES;i++){
+        for(int i=0;i<activeEnemies;i++){
             if(enemyBody[i].destroyEnemy()){
                 Body b = enemyBody[i].getBody();
                 if(b.getType()!=null){
                     world.destroyBody(b);
                     enemyBody[i].setEnemyHits(-1);
+                    destroyedEnemies++;
                 }
-
             }
         }
 
+        boolean victory = destroyedEnemies >= NUM_ENEMIES;
+
         //Perdeu o jogo
-        if(player.getPlayerHits()>=PLAYER_LIVES)
+        if(player.getPlayerHits()>=PLAYER_LIVES || victory)
             gsm.setState(GameStateManager.END);
+
+        world.step(dt, 6, 2);
+        //if(victory) gsm.setState(GameStateManager.END);
     }
 
     public void render() {
         //clear screen
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //Set a hit to the player every 4 seconds
-        timer += Gdx.graphics.getDeltaTime();
-        if (timer >= 3.420f) {
-            player.setPlayerHits();
-            timer = 0f;
-        }
-
         sb.setProjectionMatrix(cam.combined);
+
+        String denm = "Inimigos Restando: " + Integer.toString(NUM_ENEMIES - destroyedEnemies);
+
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(enemiesIterator, denm);
 
         int height = lifeBar[0].getRegionHeight();
         int width = lifeBar[0].getRegionWidth();
+
 
         sb.begin();
         sb.draw(invasorsHunt.res.getTexture("background"), player.xWall, 0,600, invasorsHunt.V_HEIGHT);
@@ -145,12 +162,20 @@ public class Play extends GameState {
                 width / 2f,
                 height / 2f);
         sb.draw(invasorsHunt.res.getTexture("background2"), player.xWall, 0,600, invasorsHunt.V_HEIGHT);
+        enemiesIterator.draw(
+                sb,
+                denm,
+                (invasorsHunt.V_WIDTH - layout.width - 25),
+                (invasorsHunt.V_HEIGHT - layout.height + 5)
+        );
         sb.end();
 
 
-        for(int i = 0; i < NUM_ENEMIES; i++)
-            if (enemyBody[i].getPlayerHits() > -1)
+        for(int i = 0; i < activeEnemies; i++)
+            if (enemyBody[i].getPlayerHits() > -1) {
                 enemyBody[i].render(sb);
+            }
+
         player.render(sb);
 
         b2dr.render(world, b2dCam.combined);
@@ -220,7 +245,7 @@ public class Play extends GameState {
 
     public void getBodiesToRemove(){
         boolean punch = false;
-	    for(int i=0;i<NUM_ENEMIES;i++){
+	    for(int i=0;i<activeEnemies;i++){
 	        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++)
 	        if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.get(j).getBody()
                     && enemyBody[i].getPlayerHits() != -1
@@ -256,7 +281,9 @@ public class Play extends GameState {
         FixtureDef fdef = new FixtureDef();
 
         //bdef.position.set(180 / PPM,(130) / PPM);
-        bdef.position.set(((400+getRand(-300,300))*dist) / PPM,((getRand(0,80))) / PPM);
+        int i = getRand(1,3)*2-3;
+        bdef.position.set( i > 0 ? ((100+getRand(50,150))*dist*i) / PPM : ((getRand(0,100))*dist*i) / PPM,
+                (getRand(0,80)) / PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         Body body = world.createBody(bdef);
         body.setGravityScale(0f);
@@ -279,5 +306,5 @@ public class Play extends GameState {
         return new Enemy(body);
     }
 
-    public void dispose() {}
+    public void dispose() { invasorsHunt.res.getMusic("play").stop(); }
 }

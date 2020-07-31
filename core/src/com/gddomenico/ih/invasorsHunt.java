@@ -43,8 +43,11 @@ public class invasorsHunt extends ApplicationAdapter {
 		res.loadSound("sounds/missed.wav", "miss");
 
 		res.loadMusic("sounds/menu.wav","menu");
+		res.loadMusic("sounds/play.wav","play");
 		res.getMusic("menu").setLooping(false);
 		res.getMusic("menu").setVolume(0.2f);
+		res.getMusic("play").setLooping(true);
+		res.getMusic("play").setVolume(0.2f);
 
 		res.loadTexture("images/background2.png","background2");
 		res.loadTexture("images/background.jpg","background");

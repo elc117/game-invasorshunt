@@ -89,7 +89,6 @@ public class Menu extends GameState {
     	
 		sb.draw(invasorsHunt.res.getTexture("menu"), 0, 0,invasorsHunt.V_WIDTH, invasorsHunt.V_HEIGHT);
 
-
     	titleFont.draw(
 			sb, 
 			title, 
