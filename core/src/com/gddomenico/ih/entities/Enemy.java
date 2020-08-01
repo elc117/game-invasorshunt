@@ -2,19 +2,26 @@ package com.gddomenico.ih.entities;
 
 import static com.gddomenico.ih.handlers.B2DVars.ENEMY_LIVES;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.gddomenico.ih.handlers.MyInput;
 import com.gddomenico.ih.invasorsHunt;
+import com.gddomenico.ih.states.Play;
 
 public class Enemy extends B2DSprite {
 
 	private boolean isOnRight;
+
+	private float attackDelay;
+    private float timer = 0;
 	
 	public Enemy (Body body) {
 	    super(body);
+
+        attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
 
         int column = 4;
         int row = 2;
@@ -65,16 +72,13 @@ public class Enemy extends B2DSprite {
                 (edgeMap != -280 && edgeMap != 0)){
                 if(cos < 0 && onWall == 2)
                     body.setLinearVelocity(cos*2, sin);
-                else if(cos > 0 &&onWall == 1)
+                else if(cos > 0 && onWall == 1)
                     body.setLinearVelocity(cos*-2, sin);
                 else
                     body.setLinearVelocity(cos*-1, 0);
             }
-
             else
                 body.setLinearVelocity(cos, sin);
-
-
 
     }
 
@@ -83,6 +87,17 @@ public class Enemy extends B2DSprite {
     }
     public void setEnemyHits(int hits) {
         playerHits = hits;
+    }
+
+    public void hasPunched () { timer -= attackDelay; }
+    public void countTimer (float dt) { timer += dt; }
+    public boolean canPunch () {
+        if (timer >= attackDelay) {
+            hasPunched();
+            attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
+            return true;
+        }
+        return false;
     }
 
     /**

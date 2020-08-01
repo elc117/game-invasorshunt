@@ -85,12 +85,32 @@ public class Play extends GameState {
     public void handleInput() {
     }
 
+    public void setPlayerHits (float dt) {
+        int hits = 0;
+        for(int i=0;i<activeEnemies;i++){
+            for (int j = 0; j < player.getContactListener().currentEnemy.size; j++) {
+                if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.get(j).getBody()) {
+                    Enemy aux = enemyBody[i];
+                    aux.countTimer(dt);
+                    if (aux.canPunch()) {
+                        player.getBody().applyForceToCenter(aux.getSide() ? 50 : -50, 0, true);
+                        hits++;
+                    }
+                }
+            }
+        }
+        player.setPlayerHits(hits);
+    }
+
     public void update(float dt) {
 
-        //Set a hit to the player every 4 seconds
-        timer += Gdx.graphics.getDeltaTime();
-        if (timer >= 3.420f) {
-            player.setPlayerHits();
+        //Set a hit to the player every enemy delay, each enemy has one
+        if (player.getContactListener().isPlayerOnContact())
+            setPlayerHits(dt);
+
+        timer += dt;
+        // Spawn a new enemy each 5 seconds
+        if (timer >= 5f) {
             if(activeEnemies < NUM_ENEMIES) {
                 enemyBody[activeEnemies] = createEnemy(2);
                 activeEnemies++;
@@ -98,6 +118,7 @@ public class Play extends GameState {
             timer = 0f;
         }
 
+        // Punches if player delay is not set
         if(!player.getStop()) {
             if (player.handleInput()) {
                 getBodiesToRemove();
@@ -111,6 +132,7 @@ public class Play extends GameState {
             }
         }
 
+        // Update each player/enemy
     	player.update(dt);
         for(int i = 0; i < activeEnemies; i++)
         	if (enemyBody[i].getPlayerHits() > -1) {
@@ -118,6 +140,7 @@ public class Play extends GameState {
         	    enemyBody[i].update(dt);
             }
 
+        // Seeks if an enemy needs to be destroyed
         for(int i=0;i<activeEnemies;i++){
             if(enemyBody[i].destroyEnemy()){
                 Body b = enemyBody[i].getBody();
@@ -187,7 +210,7 @@ public class Play extends GameState {
      * @param max y
      * @return random number
      */
-    public int getRand(int min, int max) {
+    public static int getRand(int min, int max) {
         Random random = new Random();
         return random.nextInt(max - min) + min;
     }
@@ -252,6 +275,7 @@ public class Play extends GameState {
                     && enemyBody[i].getSide() == !player.getRightArm()){
 	            punch = true;
 	        	enemyBody[i].setEnemyHits();
+                enemyBody[i].getBody().applyForceToCenter(enemyBody[i].getSide() ? -200 : 200,0, true);
 	        }
 	    }
 	    if (punch) invasorsHunt.res.getSound("punch").play(0.1f);
@@ -269,7 +293,11 @@ public class Play extends GameState {
 
         shape.setAsBox(5 / PPM,5 / PPM);
         fdef.shape = shape;
-        fdef.friction = 100000000000000f;
+        fdef.friction = 1000000000000f;
+        //MassData mass = new MassData();
+        //mass.I = body.getAngle();
+        //mass.I = 5f;
+        //body.setMassData(mass);
         //to change the category
         body.createFixture(fdef).setUserData("Player");
 

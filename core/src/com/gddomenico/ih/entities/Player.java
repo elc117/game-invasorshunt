@@ -12,7 +12,7 @@ public class Player extends B2DSprite{
     private final MyContactListener cl;
 
     public int xWall = -100; //moves the background in the X axis
-    public static final float delay = 1 / 6f;
+    public static final float delay = 1/3f;
     private boolean stop = false;
 
 	public Player(Body body) {
@@ -45,7 +45,8 @@ public class Player extends B2DSprite{
             System.out.println("SPACE");
         }
         if(!MyInput.isDown(MyInput.BUTTON_D) && !MyInput.isDown(MyInput.BUTTON_W) && !MyInput.isDown(MyInput.BUTTON_A) && !MyInput.isDown(MyInput.BUTTON_S)) {
-            body.setLinearVelocity(0,0);
+            float velX = body.getLinearVelocity().x;
+            body.setLinearVelocity(velX - (velX/4f) , 0);
             animation.setWalk(false);
         }
         else {
@@ -103,11 +104,9 @@ public class Player extends B2DSprite{
         return false;
     }
 
-    
-    public void setPlayerHits(){
-        if(cl.isPlayerOnContact())
-            playerHits += cl.getContacts();
-        System.out.println(playerHits);
+
+    public void setPlayerHits(int num){
+	    playerHits += num;
     }
 
 	public MyContactListener getContactListener () {
