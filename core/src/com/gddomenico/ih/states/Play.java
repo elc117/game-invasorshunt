@@ -16,6 +16,7 @@ import com.gddomenico.ih.invasorsHunt;
 import com.gddomenico.ih.entities.Enemy;
 import com.gddomenico.ih.entities.Player;
 
+import com.badlogic.gdx.utils.Array;
 import java.util.Random;
 
 
@@ -34,7 +35,7 @@ public class Play extends GameState {
     private final BitmapFont enemiesIterator;
 
     private Player player;
-    private final Enemy[] enemyBody = new Enemy[NUM_ENEMIES];
+    private final Array<Enemy> enemyBody = new Array<Enemy>();
 
     private float timer = 0;
     private float timeStop = 0;
@@ -55,7 +56,7 @@ public class Play extends GameState {
         b2dr = new Box2DDebugRenderer();
         //It's going to receive the number to make the enemy spawn more far from the main
         for(int i = 0; i < activeEnemies; i++){
-            enemyBody[i] = createEnemy(2);
+            enemyBody.add(createEnemy(2));
         }
 
 
@@ -87,10 +88,10 @@ public class Play extends GameState {
 
     public void setPlayerHits (float dt) {
         int hits = 0;
-        for(int i=0;i<activeEnemies;i++){
-            for (int j = 0; j < player.getContactListener().currentEnemy.size; j++) {
-                if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.get(j).getBody()) {
-                    Enemy aux = enemyBody[i];
+        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++) {
+           for(int i=0;i<enemyBody.size;i++){
+                if(enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody()) {
+                    Enemy aux = enemyBody.get(i);
                     aux.countTimer(dt);
                     if (aux.canPunch()) {
                         player.getBody().applyForceToCenter(aux.getSide() ? 50 : -50, 0, true);
@@ -110,12 +111,11 @@ public class Play extends GameState {
 
         timer += dt;
         // Spawn a new enemy each 5 seconds
-        if (timer >= 5f) {
-            if(activeEnemies < NUM_ENEMIES) {
-                enemyBody[activeEnemies] = createEnemy(2);
-                activeEnemies++;
-            }
-            timer = 0f;
+        if (timer >= 3.4f && activeEnemies < NUM_ENEMIES && enemyBody.size < 6) {
+            enemyBody.add(createEnemy(2));
+            activeEnemies++;
+
+            timer -= 3.4f;
         }
 
         // Punches if player delay is not set
@@ -134,19 +134,18 @@ public class Play extends GameState {
 
         // Update each player/enemy
     	player.update(dt);
-        for(int i = 0; i < activeEnemies; i++)
-        	if (enemyBody[i].getPlayerHits() > -1) {
-                enemyBody[i].FollowPlayer(player.getBody(), player.getContactListener().isPlayerOnTheWall(), player.xWall);
-        	    enemyBody[i].update(dt);
-            }
+        for(int i = 0; i < enemyBody.size; i++){
+            enemyBody.get(i).FollowPlayer(player.getBody(), player.getContactListener().isPlayerOnTheWall(), player.xWall);
+            enemyBody.get(i).update(dt);
+        }
 
         // Seeks if an enemy needs to be destroyed
-        for(int i=0;i<activeEnemies;i++){
-            if(enemyBody[i].destroyEnemy()){
-                Body b = enemyBody[i].getBody();
+        for(int i=0;i<enemyBody.size;i++){
+            if(enemyBody.get(i).destroyEnemy()){
+                Body b = enemyBody.get(i).getBody();
                 if(b.getType()!=null){
                     world.destroyBody(b);
-                    enemyBody[i].setEnemyHits(-1);
+                    enemyBody.removeIndex(i);
                     destroyedEnemies++;
                 }
             }
@@ -194,10 +193,9 @@ public class Play extends GameState {
         sb.end();
 
 
-        for(int i = 0; i < activeEnemies; i++)
-            if (enemyBody[i].getPlayerHits() > -1) {
-                enemyBody[i].render(sb);
-            }
+        for(int i = 0; i < enemyBody.size; i++)
+            enemyBody.get(i).render(sb);
+
 
         player.render(sb);
 
@@ -268,15 +266,16 @@ public class Play extends GameState {
 
     public void getBodiesToRemove(){
         boolean punch = false;
-	    for(int i=0;i<activeEnemies;i++){
-	        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++)
-	        if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.get(j).getBody()
-                    && enemyBody[i].getPlayerHits() != -1
-                    && enemyBody[i].getSide() == !player.getRightArm()){
-	            punch = true;
-	        	enemyBody[i].setEnemyHits();
-                enemyBody[i].getBody().applyForceToCenter(enemyBody[i].getSide() ? -200 : 200,0, true);
-	        }
+        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++)
+	    for (int i = 0;i<enemyBody.size;i++){
+	        if(enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody()
+                    && enemyBody.get(i).getPlayerHits() != -1
+                    && enemyBody.get(i).getSide() == !player.getRightArm())
+	        {
+                punch = true;
+                enemyBody.get(i).setEnemyHits();
+                enemyBody.get(i).getBody().applyForceToCenter(enemyBody.get(i).getSide() ? -200 : 200,0, true);
+            }
 	    }
 	    if (punch) invasorsHunt.res.getSound("punch").play(0.1f);
         else invasorsHunt.res.getSound("miss").play(0.1f);
