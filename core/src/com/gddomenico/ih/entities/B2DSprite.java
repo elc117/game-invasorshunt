@@ -23,6 +23,10 @@ public class B2DSprite {
     protected float width;
     protected float height;
 
+    private float timeStop = 0f;
+    public static final float delay = 1/3f;
+
+    protected boolean stop = false;
 
     public B2DSprite(Body body) {
         this.body = body;
@@ -40,6 +44,14 @@ public class B2DSprite {
     }
 
     public void update(float dt) {
+
+        if(stop)
+            timeStop += dt;
+        if(timeStop >= delay) {
+            stop = false;
+            timeStop -= delay;
+        }
+
         animation.update(dt);
     }
 
@@ -63,6 +75,9 @@ public class B2DSprite {
     public Vector2 getPosition() { return body.getPosition(); }
     public float getWidth() { return width; }
     public float getHeight() { return height; }
+
+    public boolean getStop() { return stop;}
+    public void setStop(boolean stop) { this.stop = stop; }
 
     public int getPlayerHits(){
         return playerHits;
