@@ -11,15 +11,20 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
+import com.gddomenico.ih.entities.Heart;
 import com.gddomenico.ih.handlers.*;
 import com.gddomenico.ih.invasorsHunt;
 import com.gddomenico.ih.entities.Enemy;
 import com.gddomenico.ih.entities.Player;
 
+import com.badlogic.gdx.utils.Array;
 import java.util.Random;
 
 
 public class Play extends GameState {
+
+    private static final boolean debug = false;
 
     private final World world;
     private final Box2DDebugRenderer b2dr;
@@ -34,10 +39,11 @@ public class Play extends GameState {
     private final BitmapFont enemiesIterator;
 
     private Player player;
-    private final Enemy[] enemyBody = new Enemy[NUM_ENEMIES];
+    private final Array<Enemy> enemyBody = new Array<Enemy>();
 
     private float timer = 0;
-    private float timeStop = 0;
+
+    private Array<Heart> hearts = new Array<Heart>();
 
     public Play(GameStateManager gsm) {
         super(gsm);
@@ -55,7 +61,7 @@ public class Play extends GameState {
         b2dr = new Box2DDebugRenderer();
         //It's going to receive the number to make the enemy spawn more far from the main
         for(int i = 0; i < activeEnemies; i++){
-            enemyBody[i] = createEnemy(2);
+            enemyBody.add(createEnemy(2));
         }
 
 
@@ -81,16 +87,13 @@ public class Play extends GameState {
         b2dCam = new OrthographicCamera();
         b2dCam.setToOrtho(false, invasorsHunt.V_WIDTH / PPM, invasorsHunt.V_HEIGHT / PPM);
     }
-   
-    public void handleInput() {
-    }
 
     public void setPlayerHits (float dt) {
         int hits = 0;
-        for(int i=0;i<activeEnemies;i++){
-            for (int j = 0; j < player.getContactListener().currentEnemy.size; j++) {
-                if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.get(j).getBody()) {
-                    Enemy aux = enemyBody[i];
+        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++) {
+           for(int i=0;i<enemyBody.size;i++){
+                if(enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody() && !enemyBody.get(i).getStop()) {
+                    Enemy aux = enemyBody.get(i);
                     aux.countTimer(dt);
                     if (aux.canPunch()) {
                         player.getBody().applyForceToCenter(aux.getSide() ? 50 : -50, 0, true);
@@ -110,43 +113,36 @@ public class Play extends GameState {
 
         timer += dt;
         // Spawn a new enemy each 5 seconds
-        if (timer >= 5f) {
-            if(activeEnemies < NUM_ENEMIES) {
-                enemyBody[activeEnemies] = createEnemy(2);
-                activeEnemies++;
-            }
-            timer = 0f;
+        if (timer >= 3.4f && activeEnemies < NUM_ENEMIES && enemyBody.size < 1) {
+            enemyBody.add(createEnemy(2));
+            activeEnemies++;
+
+            timer -= 3.4f;
         }
 
         // Punches if player delay is not set
-        if(!player.getStop()) {
-            if (player.handleInput()) {
-                getBodiesToRemove();
-            }
-        }
-        else {
-            timeStop += dt;
-            if(timeStop >= Player.delay) {
-                player.setStop(false);
-                timeStop = 0f;
-            }
+        if (!player.getStop() && player.handleInput() ) {
+            getBodiesToRemove();
         }
 
         // Update each player/enemy
     	player.update(dt);
-        for(int i = 0; i < activeEnemies; i++)
-        	if (enemyBody[i].getPlayerHits() > -1) {
-                enemyBody[i].FollowPlayer(player.getBody(), player.getContactListener().isPlayerOnTheWall(), player.xWall);
-        	    enemyBody[i].update(dt);
-            }
+        for(int i = 0; i < enemyBody.size; i++){
+            enemyBody.get(i).FollowPlayer(player.getBody(), player.getContactListener().isPlayerOnTheWall(), player.xWall);
+            enemyBody.get(i).update(dt);
+        }
 
         // Seeks if an enemy needs to be destroyed
-        for(int i=0;i<activeEnemies;i++){
-            if(enemyBody[i].destroyEnemy()){
-                Body b = enemyBody[i].getBody();
+        for(int i=0;i<enemyBody.size;i++){
+            if(enemyBody.get(i).destroyEnemy()){
+                Body b = enemyBody.get(i).getBody();
                 if(b.getType()!=null){
+                    if(getRand(0,100)%10==0)
+                        createHearts(enemyBody.get(i).getPosition());
+                    for(int j=0;j < hearts.size; j++)
+                        hearts.get(j).update(dt);
                     world.destroyBody(b);
-                    enemyBody[i].setEnemyHits(-1);
+                    enemyBody.removeIndex(i);
                     destroyedEnemies++;
                 }
             }
@@ -159,6 +155,16 @@ public class Play extends GameState {
             gsm.setState(GameStateManager.END);
 
         world.step(dt, 6, 2);
+
+        //removing hearts and giving one life each heart
+        Array<Body> heartsToRemove = player.getContactListener().getHeartsToRemove();
+        for(int i=0;i<heartsToRemove.size;i++){
+            Body h = heartsToRemove.get(i);
+            hearts.removeValue((Heart) h.getUserData(), true);
+            world.destroyBody(h);
+            player.getLife();
+        }
+        heartsToRemove.clear();
         //if(victory) gsm.setState(GameStateManager.END);
     }
 
@@ -176,7 +182,6 @@ public class Play extends GameState {
         int height = lifeBar[0].getRegionHeight();
         int width = lifeBar[0].getRegionWidth();
 
-
         sb.begin();
         sb.draw(invasorsHunt.res.getTexture("background"), player.xWall, 0,600, invasorsHunt.V_HEIGHT);
         sb.draw(player.getPlayerHits() <= 10 ? lifeBar[player.getPlayerHits()] : lifeBar[10],
@@ -192,16 +197,17 @@ public class Play extends GameState {
                 (invasorsHunt.V_HEIGHT - layout.height + 5)
         );
         sb.end();
+        //draw a heart
+        if(hearts.notEmpty())
+            for(int i=0;i < hearts.size; i++)
+                hearts.get(i).render(sb);
 
-
-        for(int i = 0; i < activeEnemies; i++)
-            if (enemyBody[i].getPlayerHits() > -1) {
-                enemyBody[i].render(sb);
-            }
-
+        for(int i = 0; i < enemyBody.size; i++)
+            enemyBody.get(i).render(sb);
         player.render(sb);
 
-        b2dr.render(world, b2dCam.combined);
+        if(debug)
+            b2dr.render(world, b2dCam.combined);
     }
 
     /**
@@ -213,6 +219,26 @@ public class Play extends GameState {
     public static int getRand(int min, int max) {
         Random random = new Random();
         return random.nextInt(max - min) + min;
+    }
+
+    public void getBodiesToRemove(){
+        boolean punch = false;
+        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++)
+	    for (int i = 0;i<enemyBody.size;i++){
+	        if(enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody()
+                    && enemyBody.get(i).getPlayerHits() != -1
+                    && enemyBody.get(i).getSide() == !player.getRightArm())
+	        {
+                punch = true;
+                enemyBody.get(i).setEnemyHits();
+                enemyBody.get(i).getBody().applyForceToCenter(enemyBody.get(i).getSide() ? -200 : 200,0, true);
+            }
+	    }
+	    if (punch) invasorsHunt.res.getSound("punch").play(0.1f);
+        else invasorsHunt.res.getSound("miss").play(0.1f);
+	}
+
+    public void handleInput() {
     }
 
     public void createBorder(){
@@ -235,7 +261,7 @@ public class Play extends GameState {
         bdef.position.set(10 / PPM,invasorsHunt.V_HEIGHT / PPM);
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderDownBody = world.createBody(bdef);
-        
+
 
         shape.setAsBox(0 / PPM,invasorsHunt.V_HEIGHT / PPM);
         fdef.shape = shape;
@@ -266,22 +292,6 @@ public class Play extends GameState {
         borderRightBody.createFixture(fdef).setUserData("Border_Right");
     }
 
-    public void getBodiesToRemove(){
-        boolean punch = false;
-	    for(int i=0;i<activeEnemies;i++){
-	        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++)
-	        if(enemyBody[i].getBody() == player.getContactListener().currentEnemy.get(j).getBody()
-                    && enemyBody[i].getPlayerHits() != -1
-                    && enemyBody[i].getSide() == !player.getRightArm()){
-	            punch = true;
-	        	enemyBody[i].setEnemyHits();
-                enemyBody[i].getBody().applyForceToCenter(enemyBody[i].getSide() ? -200 : 200,0, true);
-	        }
-	    }
-	    if (punch) invasorsHunt.res.getSound("punch").play(0.1f);
-        else invasorsHunt.res.getSound("miss").play(0.1f);
-	}
-
 	public void createPlayer(){
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
@@ -291,7 +301,7 @@ public class Play extends GameState {
         bdef.type =  BodyDef.BodyType.DynamicBody;
         Body body = world.createBody(bdef);
 
-        shape.setAsBox(5 / PPM,5 / PPM);
+        shape.setAsBox(10 / PPM,10 / PPM);
         fdef.shape = shape;
         fdef.friction = 1000000000000f;
         //MassData mass = new MassData();
@@ -305,7 +315,7 @@ public class Play extends GameState {
     }
     public Enemy createEnemy(Integer dist){
         BodyDef bdef = new BodyDef();
-        PolygonShape shape = new PolygonShape();
+        CircleShape cshape = new CircleShape();
         FixtureDef fdef = new FixtureDef();
 
         //bdef.position.set(180 / PPM,(130) / PPM);
@@ -316,8 +326,8 @@ public class Play extends GameState {
         Body body = world.createBody(bdef);
         body.setGravityScale(0f);
 
-        shape.setAsBox(5 / PPM,5 / PPM);
-        fdef.shape = shape;
+        cshape.setRadius(10f / PPM);
+        fdef.shape = cshape;
         //to change the category
         fdef.filter.categoryBits = B2DVars.BIT_ENEMY;
         fdef.filter.maskBits = B2DVars.BIT_ENEMY;
@@ -325,13 +335,38 @@ public class Play extends GameState {
         body.createFixture(fdef).setUserData("Enemy");
 
         // create a foot sensor
-        shape.setAsBox(5/PPM, 2/PPM, new Vector2(0, -2/ PPM), 0);
-        fdef.shape = shape;
+        cshape.setRadius(10f / PPM);
+        fdef.shape = cshape;
         fdef.filter.categoryBits = B2DVars.BIT_ENEMY;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         body.createFixture(fdef).setUserData("Foot_Enemy");
 
         return new Enemy(body);
+    }
+
+    private void createHearts(Vector2 heartsPos){
+
+        BodyDef bdef = new BodyDef();
+        FixtureDef fdef = new FixtureDef();
+
+        bdef.position.set(heartsPos);
+
+        CircleShape cshape = new CircleShape();
+        cshape.setRadius(2f / PPM);
+
+        fdef.shape = cshape;
+        fdef.isSensor = true;
+        fdef.filter.categoryBits = B2DVars.BIT_HEART;
+        fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+
+        Body body = world.createBody(bdef);
+        body.createFixture(fdef).setUserData("Hearts");
+
+        Heart h = new Heart(body);
+        hearts.add(h);
+
+        body.setUserData(h);
+
     }
 
     public void dispose() { invasorsHunt.res.getMusic("play").stop(); }

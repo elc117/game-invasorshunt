@@ -1,11 +1,11 @@
-com/gddomenico/ih/entities/Player.java
- com.gddomenico.ih.entities.Player
-com/gddomenico/ih/entities/B2DSprite.java
- com.gddomenico.ih.entities.B2DSprite
+com/gddomenico/ih/handlers/Tuple.java
+ com.gddomenico.ih.handlers.Tuple
+com/gddomenico/ih/handlers/MyInput.java
+ com.gddomenico.ih.handlers.MyInput
 com/gddomenico/ih/states/Help.java
  com.gddomenico.ih.states.Help
-com/gddomenico/ih/states/Play.java
- com.gddomenico.ih.states.Play
+com/gddomenico/ih/invasorsHunt.java
+ com.gddomenico.ih.invasorsHunt
 com/gddomenico/ih/handlers/GameStateManager.java
  com.gddomenico.ih.handlers.GameStateManager
 com/gddomenico/ih/states/GameState.java
@@ -18,17 +18,19 @@ com/gddomenico/ih/states/Menu.java
  com.gddomenico.ih.states.Menu
 com/gddomenico/ih/handlers/B2DVars.java
  com.gddomenico.ih.handlers.B2DVars
-com/gddomenico/ih/handlers/Animation.java
- com.gddomenico.ih.handlers.Animation
-com/gddomenico/ih/handlers/Content.java
- com.gddomenico.ih.handlers.Content
-com/gddomenico/ih/invasorsHunt.java
- com.gddomenico.ih.invasorsHunt
 com/gddomenico/ih/handlers/MyInputProcessor.java
  com.gddomenico.ih.handlers.MyInputProcessor
-com/gddomenico/ih/handlers/MyInput.java
- com.gddomenico.ih.handlers.MyInput
+com/gddomenico/ih/handlers/Content.java
+ com.gddomenico.ih.handlers.Content
+com/gddomenico/ih/handlers/Animation.java
+ com.gddomenico.ih.handlers.Animation
+com/gddomenico/ih/entities/Heart.java
+ com.gddomenico.ih.entities.Heart
+com/gddomenico/ih/entities/B2DSprite.java
+ com.gddomenico.ih.entities.B2DSprite
 com/gddomenico/ih/entities/Enemy.java
  com.gddomenico.ih.entities.Enemy
-com/gddomenico/ih/handlers/Tuple.java
- com.gddomenico.ih.handlers.Tuple
+com/gddomenico/ih/entities/Player.java
+ com.gddomenico.ih.entities.Player
+com/gddomenico/ih/states/Play.java
+ com.gddomenico.ih.states.Play

@@ -23,10 +23,10 @@ public class Enemy extends B2DSprite {
 
         attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
 
-        int column = 4;
-        int row = 2;
+        int column = 12;
+        int row = 1;
 
-        Texture tex = invasorsHunt.res.getTexture("slime");
+        Texture tex = invasorsHunt.res.getTexture("enemies");
         TextureRegion[][] tmp = new TextureRegion(tex).split(
                 tex.getWidth() / column,
                 tex.getHeight() / row);
@@ -58,12 +58,12 @@ public class Enemy extends B2DSprite {
 
         float hipotenusa = (float) Math.sqrt((px * px) + (py * py));
 
-        float cos = (px / hipotenusa) * 0.2f;
-        float sin = (py / hipotenusa) * 0.2f;
+        float cos = (px / hipotenusa) * 0.5f;
+        float sin = (py / hipotenusa) * 0.5f;
 
         //System.out.println("hipot: " + hipotenusa);
 
-        if(hipotenusa < 0.1)
+        if(hipotenusa < 0.2 || stop)
             body.setLinearVelocity(0, 0);
         else
             //First check if is player on the wall, then check if the player is pressing to move and final check if there is still map to move
@@ -71,11 +71,11 @@ public class Enemy extends B2DSprite {
                (MyInput.isDown(MyInput.BUTTON_D) || MyInput.isDown(MyInput.BUTTON_A))) &&
                 (edgeMap != -280 && edgeMap != 0)){
                 if(cos < 0 && onWall == 2)
-                    body.setLinearVelocity(cos*2, sin);
+                    body.setLinearVelocity(cos*1, sin);
                 else if(cos > 0 && onWall == 1)
-                    body.setLinearVelocity(cos*-2, sin);
+                    body.setLinearVelocity(cos*-1, sin);
                 else
-                    body.setLinearVelocity(cos*-1, 0);
+                    body.setLinearVelocity(cos*-0.5f, 0);
             }
             else
                 body.setLinearVelocity(cos, sin);
@@ -94,6 +94,7 @@ public class Enemy extends B2DSprite {
     public boolean canPunch () {
         if (timer >= attackDelay) {
             hasPunched();
+            stop = true;
             attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
             return true;
         }
