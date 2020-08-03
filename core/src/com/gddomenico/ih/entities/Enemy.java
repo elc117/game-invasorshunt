@@ -23,10 +23,10 @@ public class Enemy extends B2DSprite {
 
         attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
 
-        int column = 4;
-        int row = 2;
+        int column = 12;
+        int row = 1;
 
-        Texture tex = invasorsHunt.res.getTexture("slime");
+        Texture tex = invasorsHunt.res.getTexture("enemies");
         TextureRegion[][] tmp = new TextureRegion(tex).split(
                 tex.getWidth() / column,
                 tex.getHeight() / row);

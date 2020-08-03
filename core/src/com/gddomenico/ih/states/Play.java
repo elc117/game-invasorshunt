@@ -24,6 +24,8 @@ import java.util.Random;
 
 public class Play extends GameState {
 
+    private static final boolean debug = false;
+
     private final World world;
     private final Box2DDebugRenderer b2dr;
 
@@ -135,7 +137,7 @@ public class Play extends GameState {
             if(enemyBody.get(i).destroyEnemy()){
                 Body b = enemyBody.get(i).getBody();
                 if(b.getType()!=null){
-                    if(getRand(0,10)%3==0)
+                    if(getRand(0,100)%10==0)
                         createHearts(enemyBody.get(i).getPosition());
                     for(int j=0;j < hearts.size; j++)
                         hearts.get(j).update(dt);
@@ -204,7 +206,8 @@ public class Play extends GameState {
             enemyBody.get(i).render(sb);
         player.render(sb);
 
-        b2dr.render(world, b2dCam.combined);
+        if(debug)
+            b2dr.render(world, b2dCam.combined);
     }
 
     /**
@@ -312,7 +315,7 @@ public class Play extends GameState {
     }
     public Enemy createEnemy(Integer dist){
         BodyDef bdef = new BodyDef();
-        PolygonShape shape = new PolygonShape();
+        CircleShape cshape = new CircleShape();
         FixtureDef fdef = new FixtureDef();
 
         //bdef.position.set(180 / PPM,(130) / PPM);
@@ -323,8 +326,8 @@ public class Play extends GameState {
         Body body = world.createBody(bdef);
         body.setGravityScale(0f);
 
-        shape.setAsBox(10 / PPM,10 / PPM);
-        fdef.shape = shape;
+        cshape.setRadius(10f / PPM);
+        fdef.shape = cshape;
         //to change the category
         fdef.filter.categoryBits = B2DVars.BIT_ENEMY;
         fdef.filter.maskBits = B2DVars.BIT_ENEMY;
@@ -332,8 +335,8 @@ public class Play extends GameState {
         body.createFixture(fdef).setUserData("Enemy");
 
         // create a foot sensor
-        shape.setAsBox(10/PPM, 4/PPM, new Vector2(0, -4/ PPM), 0);
-        fdef.shape = shape;
+        cshape.setRadius(10f / PPM);
+        fdef.shape = cshape;
         fdef.filter.categoryBits = B2DVars.BIT_ENEMY;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         body.createFixture(fdef).setUserData("Foot_Enemy");

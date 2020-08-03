@@ -18,23 +18,8 @@ public class Player extends B2DSprite{
 
 		cl = new MyContactListener();
 
-		int column = 5;
-		int row = 2;
+		animatePlayer(invasorsHunt.res.getTexture("main"), 6f, 3, 1);
 
-		Texture tex = invasorsHunt.res.getTexture("bunny");
-        TextureRegion[][] tmp = new TextureRegion(tex).split(
-                tex.getWidth() / column,
-                tex.getHeight() / row);
-
-        TextureRegion[] sprites = new TextureRegion[column*row];
-
-        int index = 0;
-        for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-                sprites[index++]=tmp[i][j];
-            }
-        }
-        setAnimation(sprites, 1 / 12f);
 	}
 	
 
@@ -43,26 +28,33 @@ public class Player extends B2DSprite{
             System.out.println("SPACE");
         }
         if(!MyInput.isDown(MyInput.BUTTON_D) && !MyInput.isDown(MyInput.BUTTON_W) && !MyInput.isDown(MyInput.BUTTON_A) && !MyInput.isDown(MyInput.BUTTON_S)) {
+
             float velX = body.getLinearVelocity().x;
             body.setLinearVelocity(velX - (velX/4f) , 0);
             animation.setWalk(false);
         }
         else {
+
             animation.setWalk(true);
+
         }
         if(MyInput.isDown(MyInput.BUTTON_W)) {
+            animatePlayer(invasorsHunt.res.getTexture("main"), 6f, 3, 1);
             body.setLinearVelocity(body.getLinearVelocity().x, 0.75f);
         }
         if(MyInput.isUp(MyInput.BUTTON_W)) {
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
         }
         if(MyInput.isDown(MyInput.BUTTON_S)){
+            animatePlayer(invasorsHunt.res.getTexture("main"), 6f, 3, 1);
             body.setLinearVelocity(body.getLinearVelocity().x, -0.75f);
         }
         if(MyInput.isUp(MyInput.BUTTON_S)) {
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
         }
         if(MyInput.isDown(MyInput.BUTTON_A)){
+            animatePlayer(invasorsHunt.res.getTexture("main"), 6f, 3, 1);
+
             rightArm = false;
             body.setLinearVelocity(-0.75f, body.getLinearVelocity().y);
             if(cl.isPlayerOnTheWall() == 1 && xWall < 0)
@@ -73,6 +65,8 @@ public class Player extends B2DSprite{
 
         }
         if(MyInput.isDown(MyInput.BUTTON_D)){
+            animatePlayer(invasorsHunt.res.getTexture("main"), 6f, 3, 1);
+
             rightArm = true;
             body.setLinearVelocity(0.75f, body.getLinearVelocity().y);
             if(cl.isPlayerOnTheWall() == 2 && xWall > -280)
@@ -82,6 +76,8 @@ public class Player extends B2DSprite{
             body.setLinearVelocity(0, body.getLinearVelocity().y);
         }
         if(MyInput.isPressed(MyInput.BUTTON_K)){
+            animatePlayer(invasorsHunt.res.getTexture("main_punch"), 14f, 15, 1);
+            animation.setWalk(true);
             body.setLinearVelocity(0,0);
             stop = true;
             if(cl.isPlayerOnContact()){
@@ -99,12 +95,33 @@ public class Player extends B2DSprite{
                 System.out.println("Missed!!");
             }
         }
+
         return false;
     }
 
 
     public void setPlayerHits(int num){
 	    playerHits += num;
+    }
+
+    public void animatePlayer(Texture tex, float step, int cols, int rows){
+        int column = cols;
+        int row = rows;
+
+        Texture texture = tex;
+        TextureRegion[][] tmp = new TextureRegion(texture).split(
+                texture.getWidth() / column,
+                texture.getHeight() / row);
+
+        TextureRegion[] sprites = new TextureRegion[column*row];
+
+        int index = 0;
+        for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+                sprites[index++]=tmp[i][j];
+            }
+        }
+        setAnimation(sprites, 1 / step);
     }
 
     public void getLife() { if(playerHits != 0) playerHits--; }

@@ -49,6 +49,9 @@ public class invasorsHunt extends ApplicationAdapter {
 		res.getMusic("play").setLooping(true);
 		res.getMusic("play").setVolume(0.2f);
 
+		res.loadTexture("images/enemies.png","enemies");
+		res.loadTexture("images/main.png","main");
+		res.loadTexture("images/main_punch.png","main_punch");
 		res.loadTexture("images/heart.png","heart");
 		res.loadTexture("images/background2.png","background2");
 		res.loadTexture("images/background.jpg","background");
