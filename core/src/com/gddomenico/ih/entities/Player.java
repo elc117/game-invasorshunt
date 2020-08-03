@@ -12,8 +12,6 @@ public class Player extends B2DSprite{
     private final MyContactListener cl;
 
     public int xWall = -100; //moves the background in the X axis
-    public static final float delay = 1/3f;
-    private boolean stop = false;
 
 	public Player(Body body) {
 		super(body);
@@ -53,20 +51,20 @@ public class Player extends B2DSprite{
             animation.setWalk(true);
         }
         if(MyInput.isDown(MyInput.BUTTON_W)) {
-            body.setLinearVelocity(body.getLinearVelocity().x, 0.5f);
+            body.setLinearVelocity(body.getLinearVelocity().x, 0.75f);
         }
         if(MyInput.isUp(MyInput.BUTTON_W)) {
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
         }
         if(MyInput.isDown(MyInput.BUTTON_S)){
-            body.setLinearVelocity(body.getLinearVelocity().x, -0.5f);
+            body.setLinearVelocity(body.getLinearVelocity().x, -0.75f);
         }
         if(MyInput.isUp(MyInput.BUTTON_S)) {
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
         }
         if(MyInput.isDown(MyInput.BUTTON_A)){
             rightArm = false;
-            body.setLinearVelocity(-0.5f, body.getLinearVelocity().y);
+            body.setLinearVelocity(-0.75f, body.getLinearVelocity().y);
             if(cl.isPlayerOnTheWall() == 1 && xWall < 0)
                 xWall++;
         }
@@ -76,7 +74,7 @@ public class Player extends B2DSprite{
         }
         if(MyInput.isDown(MyInput.BUTTON_D)){
             rightArm = true;
-            body.setLinearVelocity(0.5f, body.getLinearVelocity().y);
+            body.setLinearVelocity(0.75f, body.getLinearVelocity().y);
             if(cl.isPlayerOnTheWall() == 2 && xWall > -280)
                 xWall--;
         }
@@ -114,8 +112,6 @@ public class Player extends B2DSprite{
 	public MyContactListener getContactListener () {
 		return cl;
 	}
-    public boolean getStop() { return stop;}
-    public void setStop(boolean stop) { this.stop = stop;}
 
     public void dispose() {
     }
