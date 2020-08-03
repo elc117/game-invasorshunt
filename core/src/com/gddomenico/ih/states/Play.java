@@ -88,23 +88,6 @@ public class Play extends GameState {
         b2dCam.setToOrtho(false, invasorsHunt.V_WIDTH / PPM, invasorsHunt.V_HEIGHT / PPM);
     }
 
-    public void setPlayerHits (float dt) {
-        int hits = 0;
-        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++) {
-           for(int i=0;i<enemyBody.size;i++){
-                if(enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody() && !enemyBody.get(i).getStop()) {
-                    Enemy aux = enemyBody.get(i);
-                    aux.countTimer(dt);
-                    if (aux.canPunch()) {
-                        player.getBody().applyForceToCenter(aux.getSide() ? 50 : -50, 0, true);
-                        hits++;
-                    }
-                }
-            }
-        }
-        player.setPlayerHits(hits);
-    }
-
     public void update(float dt) {
 
         //Set a hit to the player every enemy delay, each enemy has one
@@ -113,7 +96,7 @@ public class Play extends GameState {
 
         timer += dt;
         // Spawn a new enemy each 5 seconds
-        if (timer >= 3.4f && activeEnemies < NUM_ENEMIES && enemyBody.size < 1) {
+        if (timer >= 3.4f && activeEnemies < NUM_ENEMIES && enemyBody.size < 6) {
             enemyBody.add(createEnemy(2));
             activeEnemies++;
 
@@ -202,9 +185,29 @@ public class Play extends GameState {
             for(int i=0;i < hearts.size; i++)
                 hearts.get(i).render(sb);
 
-        for(int i = 0; i < enemyBody.size; i++)
-            enemyBody.get(i).render(sb);
-        player.render(sb);
+        // enemies render
+        for(int i = 0; i < enemyBody.size; i++) {
+            if(enemyBody.get(i).getFlash() > 0) {
+                if (enemyBody.get(i).getFlash() % 3 == 0)
+                    enemyBody.get(i).render(sb);
+                enemyBody.get(i).setFlash();
+                if (enemyBody.get(i).getFlash() > 6)
+                    enemyBody.get(i).setFlash(0);
+            }
+            else
+                enemyBody.get(i).render(sb);
+        }
+
+        //player render
+        if(player.getFlash() > 0) {
+            if (player.getFlash() % 3 == 0)
+                player.render(sb);
+            player.setFlash();
+            if (player.getFlash() > 10)
+                player.setFlash(0);
+        }
+        else
+            player.render(sb);
 
         if(debug)
             b2dr.render(world, b2dCam.combined);
@@ -221,6 +224,24 @@ public class Play extends GameState {
         return random.nextInt(max - min) + min;
     }
 
+    public void setPlayerHits (float dt) {
+        int hits = 0;
+        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++) {
+            for(int i=0;i<enemyBody.size;i++){
+                if(enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody() && !enemyBody.get(i).getStop()) {
+                    Enemy aux = enemyBody.get(i);
+                    aux.countTimer(dt);
+                    if (aux.canPunch()) {
+                        player.getBody().applyForceToCenter(aux.getSide() ? 50 : -50, 0, true);
+                        hits++;
+                        player.setFlash(1);
+                    }
+                }
+            }
+        }
+        player.setPlayerHits(hits);
+    }
+
     public void getBodiesToRemove(){
         boolean punch = false;
         for (int j = 0; j < player.getContactListener().currentEnemy.size; j++)
@@ -230,8 +251,9 @@ public class Play extends GameState {
                     && enemyBody.get(i).getSide() == !player.getRightArm())
 	        {
                 punch = true;
+                enemyBody.get(i).setFlash(1);
                 enemyBody.get(i).setEnemyHits();
-                enemyBody.get(i).getBody().applyForceToCenter(enemyBody.get(i).getSide() ? -200 : 200,0, true);
+                enemyBody.get(i).getBody().applyForceToCenter(enemyBody.get(i).getSide() ? -250 : 250,0, true);
             }
 	    }
 	    if (punch) invasorsHunt.res.getSound("punch").play(0.1f);

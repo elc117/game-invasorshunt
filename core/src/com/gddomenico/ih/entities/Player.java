@@ -43,6 +43,7 @@ public class Player extends B2DSprite{
         if(!MyInput.isDown(MyInput.BUTTON_D) && !MyInput.isDown(MyInput.BUTTON_W) && !MyInput.isDown(MyInput.BUTTON_A) && !MyInput.isDown(MyInput.BUTTON_S)) {
 
             float velX = body.getLinearVelocity().x;
+
             body.setLinearVelocity(velX - (velX/4f) , 0);
 
             animation.setWalk(false);

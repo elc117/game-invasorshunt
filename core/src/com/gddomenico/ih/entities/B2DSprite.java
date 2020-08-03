@@ -14,6 +14,8 @@ import static com.gddomenico.ih.handlers.B2DVars.PPM;
  */
 public class B2DSprite {
 
+    protected int flash = 0;
+
     protected Integer playerHits = 0;
 
     protected boolean rightArm = false;
@@ -74,6 +76,14 @@ public class B2DSprite {
                 height);
         sb.end();
     }
+
+    public void setFlash (int flash) {
+        this.flash = flash;
+    }
+    public void setFlash () {
+        this.flash++;
+    }
+    public int getFlash () { return flash; }
 
     public Body getBody() { return body; }
     public Vector2 getPosition() { return body.getPosition(); }
