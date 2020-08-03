@@ -63,7 +63,6 @@ public class Enemy extends B2DSprite {
 
         //System.out.println("hipot: " + hipotenusa);
 
-        System.out.println(stop);
         if(hipotenusa < 0.2 || stop)
             body.setLinearVelocity(0, 0);
         else

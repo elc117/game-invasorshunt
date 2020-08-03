@@ -38,10 +38,10 @@ public class Animation {
     }
     public void setFrames(TextureRegion[] frames, float delay) {
         this.frames = frames;
+        this.delay = delay;
         time = 0;
         currentFrame = 0;
         timesPlayed = 0;
-        this.delay = delay;
     }
 
     public void update(float dt) {
@@ -55,6 +55,10 @@ public class Animation {
     private void step() {
         time -= delay;
         currentFrame++;
+        //System.out.println("current: " + currentFrame);
+        //System.out.println("lenght: "+ frames.length);
+        //System.out.println("walk: "+ walk);
+
         if(!walk || currentFrame >= frames.length) {
             currentFrame = 0;
             timesPlayed++;

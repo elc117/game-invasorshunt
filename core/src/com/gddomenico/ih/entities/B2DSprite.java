@@ -33,6 +33,10 @@ public class B2DSprite {
         animation = new Animation();
     }
 
+    public void setAnimation(TextureRegion[] reg) {
+        setAnimation(reg , 1/ 12f);
+    }
+
     public void setAnimation(TextureRegion reg, float delay) {
         setAnimation(new TextureRegion[] { reg }, delay);
     }
