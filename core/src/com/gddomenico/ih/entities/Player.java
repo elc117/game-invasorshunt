@@ -109,6 +109,8 @@ public class Player extends B2DSprite{
 	    playerHits += num;
     }
 
+    public void getLife() { if(playerHits != 0) playerHits--; }
+
 	public MyContactListener getContactListener () {
 		return cl;
 	}

@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
+import com.gddomenico.ih.entities.Heart;
 import com.gddomenico.ih.handlers.*;
 import com.gddomenico.ih.invasorsHunt;
 import com.gddomenico.ih.entities.Enemy;
@@ -38,6 +40,8 @@ public class Play extends GameState {
 
     private float timer = 0;
     private float timeStop = 0;
+
+    private Array<Heart> hearts = new Array<Heart>();
 
     public Play(GameStateManager gsm) {
         super(gsm);
@@ -145,6 +149,10 @@ public class Play extends GameState {
             if(enemyBody[i].destroyEnemy()){
                 Body b = enemyBody[i].getBody();
                 if(b.getType()!=null){
+                    if(getRand(0,10)%3==0)
+                        createHearts(enemyBody[i].getPosition());
+                    for(int j=0;j < hearts.size; j++)
+                        hearts.get(j).update(dt);
                     world.destroyBody(b);
                     enemyBody[i].setEnemyHits(-1);
                     destroyedEnemies++;
@@ -159,6 +167,16 @@ public class Play extends GameState {
             gsm.setState(GameStateManager.END);
 
         world.step(dt, 6, 2);
+
+        //removing hearts and giving one life each heart
+        Array<Body> heartsToRemove = player.getContactListener().getHeartsToRemove();
+        for(int i=0;i<heartsToRemove.size;i++){
+            Body h = heartsToRemove.get(i);
+            hearts.removeValue((Heart) h.getUserData(), true);
+            world.destroyBody(h);
+            player.getLife();
+        }
+        heartsToRemove.clear();
         //if(victory) gsm.setState(GameStateManager.END);
     }
 
@@ -192,7 +210,10 @@ public class Play extends GameState {
                 (invasorsHunt.V_HEIGHT - layout.height + 5)
         );
         sb.end();
-
+        //draw a heart
+        if(hearts.notEmpty())
+            for(int i=0;i < hearts.size; i++)
+                hearts.get(i).render(sb);
 
         for(int i = 0; i < activeEnemies; i++)
             if (enemyBody[i].getPlayerHits() > -1) {
@@ -332,6 +353,31 @@ public class Play extends GameState {
         body.createFixture(fdef).setUserData("Foot_Enemy");
 
         return new Enemy(body);
+    }
+
+    private void createHearts(Vector2 heartsPos){
+
+        BodyDef bdef = new BodyDef();
+        FixtureDef fdef = new FixtureDef();
+
+        bdef.position.set(heartsPos);
+
+        CircleShape cshape = new CircleShape();
+        cshape.setRadius(2f / PPM);
+
+        fdef.shape = cshape;
+        fdef.isSensor = true;
+        fdef.filter.categoryBits = B2DVars.BIT_HEART;
+        fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+
+        Body body = world.createBody(bdef);
+        body.createFixture(fdef).setUserData("Hearts");
+
+        Heart h = new Heart(body);
+        hearts.add(h);
+
+        body.setUserData(h);
+
     }
 
     public void dispose() { invasorsHunt.res.getMusic("play").stop(); }

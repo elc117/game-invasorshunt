@@ -11,9 +11,14 @@ public class MyContactListener implements ContactListener {
     private boolean rightContact;
     private boolean leftContact;
     public Array<Fixture> currentEnemy = new Array<Fixture>();
+    private Array<Body> heartsToRemove;
     public Fixture fa;
     public Fixture fb;
 
+    public MyContactListener() {
+        super();
+        heartsToRemove = new Array<Body>();
+    }
 
     public void beginContact(Contact c) {
         fa = c.getFixtureA();
@@ -42,6 +47,12 @@ public class MyContactListener implements ContactListener {
         }
         if(fb.getUserData() != null && fb.getUserData().equals("Border_Right")){
             playerOnTheWall=2;
+        }
+        if(fa.getUserData() != null && fa.getUserData().equals("Hearts")){
+            heartsToRemove.add(fa.getBody());
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("Hearts")){
+            heartsToRemove.add(fb.getBody());
         }
     }
 
@@ -89,6 +100,8 @@ public class MyContactListener implements ContactListener {
     public boolean isPlayerOnContact() { return playerOnContact > 0; }
 
     public int isPlayerOnTheWall() { return playerOnTheWall; }
+
+    public Array<Body> getHeartsToRemove() { return heartsToRemove;}
 
     public void preSolve(Contact c, Manifold m) {
 
