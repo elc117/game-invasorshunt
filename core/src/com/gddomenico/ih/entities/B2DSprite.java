@@ -1,5 +1,7 @@
 package com.gddomenico.ih.entities;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +15,8 @@ import static com.gddomenico.ih.handlers.B2DVars.PPM;
  * Attaches animated sprites to box2d bodies
  */
 public class B2DSprite {
+
+    protected int flash = 0;
 
     protected Integer playerHits = 0;
 
@@ -74,6 +78,29 @@ public class B2DSprite {
                 height);
         sb.end();
     }
+    public void render(SpriteBatch sb, OrthographicCamera cam) {
+
+        // flip sprite
+        boolean flip = rightArm;
+        //spriteBatch.draw(currentFrame, flip ? x+width : x, y, flip ? -width : width, height);
+        //sb.draw(animation.getFrame(), (body.getPosition().x * PPM - width / 2), (int) (body.getPosition().y * PPM - height / 2));
+
+        sb.begin();
+        sb.draw(animation.getFrame(),
+                flip ? (body.getPosition().x * PPM - width / 2 ) : (body.getPosition().x * PPM + width / 2),
+                (int) (body.getPosition().y * PPM - height / 2),
+                flip ? width : -width,
+                height);
+        sb.end();
+    }
+
+    public void setFlash (int flash) {
+        this.flash = flash;
+    }
+    public void setFlash () {
+        this.flash++;
+    }
+    public int getFlash () { return flash; }
 
     public Body getBody() { return body; }
     public Vector2 getPosition() { return body.getPosition(); }
@@ -85,6 +112,23 @@ public class B2DSprite {
 
     public int getPlayerHits(){
         return playerHits;
+    }
+
+    public TextureRegion[] animateCharacter(Texture tex, int cols, int rows){
+
+        TextureRegion[][] tmp = new TextureRegion(tex).split(
+                tex.getWidth() / cols,
+                tex.getHeight() / rows);
+
+        TextureRegion[] sprites = new TextureRegion[cols*rows];
+
+        int index = 0;
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                sprites[index++]=tmp[i][j];
+            }
+        }
+        return sprites;
     }
 
     public boolean getRightArm () {

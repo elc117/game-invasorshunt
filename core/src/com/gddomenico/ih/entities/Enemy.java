@@ -2,12 +2,10 @@ package com.gddomenico.ih.entities;
 
 import static com.gddomenico.ih.handlers.B2DVars.ENEMY_LIVES;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.gddomenico.ih.handlers.MyInput;
 import com.gddomenico.ih.invasorsHunt;
 import com.gddomenico.ih.states.Play;
 
@@ -17,36 +15,30 @@ public class Enemy extends B2DSprite {
 
 	private float attackDelay;
     private float timer = 0;
+    private float timer_walk = 0;
+
+    private final TextureRegion[] punch;
+    private final TextureRegion[] walk;
+    private final TextureRegion[] death;
+
+    private boolean isDead;
 	
 	public Enemy (Body body) {
 	    super(body);
 
         attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
 
-        int column = 12;
-        int row = 1;
+        walk = animateCharacter(invasorsHunt.res.getTexture("enemies"), 12, 1);
+        punch = animateCharacter(invasorsHunt.res.getTexture("enemies_punch"), 13, 1);
+        death = animateCharacter(invasorsHunt.res.getTexture("enemies_death"), 11, 1);
+        setAnimation(walk);
 
-        Texture tex = invasorsHunt.res.getTexture("enemies");
-        TextureRegion[][] tmp = new TextureRegion(tex).split(
-                tex.getWidth() / column,
-                tex.getHeight() / row);
-
-        TextureRegion[] sprites = new TextureRegion[column*row];
-
-        int index = 0;
-        for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-                sprites[index++]=tmp[i][j];
-            }
-        }
-        setAnimation(sprites, 1 / 12f);
-        animation.setWalk(true);
 	}
 
 	/**
      * Follow the player in the given parameter
 	 */
-    public void FollowPlayer (Body player, Integer onWall, Integer edgeMap) {
+    public void FollowPlayer (Body player) {
 
         Vector2 position = player.getPosition();
         Vector2 positionEnemy = body.getPosition();
@@ -66,20 +58,28 @@ public class Enemy extends B2DSprite {
         if(hipotenusa < 0.2 || stop)
             body.setLinearVelocity(0, 0);
         else
-            //First check if is player on the wall, then check if the player is pressing to move and final check if there is still map to move
-            if(((onWall == 1 || onWall == 2) &&
-               (MyInput.isDown(MyInput.BUTTON_D) || MyInput.isDown(MyInput.BUTTON_A))) &&
-                (edgeMap != -280 && edgeMap != 0)){
-                if(cos < 0 && onWall == 2)
-                    body.setLinearVelocity(cos*1, sin);
-                else if(cos > 0 && onWall == 1)
-                    body.setLinearVelocity(cos*-1, sin);
-                else
-                    body.setLinearVelocity(cos*-0.5f, 0);
+            body.setLinearVelocity(cos, sin);
+
+    }
+
+    public void update(float dt, Body Player) {
+        super.update(dt);
+
+        timer_walk += dt;
+        // Spawn a new enemy each a few seconds
+        if (timer_walk >= 1.08f) {
+            if(isDead) {
+                setAnimation(death);
+                stop = true;
             }
             else
-                body.setLinearVelocity(cos, sin);
+                setAnimation(walk);
 
+            timer_walk -= 1.08f;
+        }
+
+        animation.setWalk(true);
+        FollowPlayer(Player);
     }
 
     public void setEnemyHits() {
@@ -89,10 +89,14 @@ public class Enemy extends B2DSprite {
         playerHits = hits;
     }
 
-    public void hasPunched () { timer -= attackDelay; }
+    public void hasPunched () {
+        timer -= attackDelay;
+    }
+
     public void countTimer (float dt) { timer += dt; }
     public boolean canPunch () {
         if (timer >= attackDelay) {
+            setAnimation(punch, 1/30f);
             hasPunched();
             stop = true;
             attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
@@ -102,11 +106,13 @@ public class Enemy extends B2DSprite {
     }
 
     /**
-     * @return true if the enemy is on the right side of the player
+     * @return true if the enemy is on the left side of the player
      */
     public boolean getSide () { return isOnRight; }
+    public void setDeathTextureRegion() {  isDead=true;}
     public boolean destroyEnemy() {
         return playerHits >= ENEMY_LIVES;
     }
+    public boolean isAnimationFinished() { return animation.getFrame(0) == walk[0];}
    
 }

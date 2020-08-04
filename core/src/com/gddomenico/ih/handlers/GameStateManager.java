@@ -11,8 +11,8 @@ import java.util.Stack;
 
 public class GameStateManager {
 
-    private invasorsHunt game;
-    private Stack<GameState> gameStates;
+    private final invasorsHunt game;
+    private final Stack<GameState> gameStates;
 
     public static final int HELP = 333;
     public static final int MENU = 420;
@@ -21,7 +21,7 @@ public class GameStateManager {
 
     public GameStateManager(invasorsHunt game) {
         this.game = game;
-        gameStates = new Stack<GameState>();
+        gameStates = new Stack<>();
         pushState(MENU);
     }
 

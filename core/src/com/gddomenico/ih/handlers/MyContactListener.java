@@ -7,17 +7,13 @@ import com.badlogic.gdx.utils.Array;
 public class MyContactListener implements ContactListener {
 
     private int playerOnContact;
-    private int playerOnTheWall;
-    private boolean rightContact;
-    private boolean leftContact;
-    public Array<Fixture> currentEnemy = new Array<Fixture>();
-    private Array<Body> heartsToRemove;
+    public Array<Fixture> currentEnemy = new Array<>();
+    private final Array<Body> heartsToRemove = new Array<>();
     public Fixture fa;
     public Fixture fb;
 
     public MyContactListener() {
         super();
-        heartsToRemove = new Array<Body>();
     }
 
     public void beginContact(Contact c) {
@@ -33,20 +29,6 @@ public class MyContactListener implements ContactListener {
         if(fb.getUserData() != null && fb.getUserData().equals("Foot_Enemy")){
             playerOnContact++;
             currentEnemy.add(fb);
-        }
-        if(fa.getUserData() != null && fa.getUserData().equals("Border_Left")){
-            playerOnTheWall=1;
-            System.out.println("LEFT");
-        }
-        if(fb.getUserData() != null && fb.getUserData().equals("Border_Left")){
-            playerOnTheWall=1;
-            System.out.println("LEFT");
-        }
-        if(fa.getUserData() != null && fa.getUserData().equals("Border_Right")){
-            playerOnTheWall=2;
-        }
-        if(fb.getUserData() != null && fb.getUserData().equals("Border_Right")){
-            playerOnTheWall=2;
         }
         if(fa.getUserData() != null && fa.getUserData().equals("Hearts")){
             heartsToRemove.add(fa.getBody());
@@ -70,8 +52,6 @@ public class MyContactListener implements ContactListener {
                     break;
                 }
             playerOnContact--;
-            leftContact = false;
-            rightContact = false;
         }
         if(fb.getUserData() != null && fb.getUserData().equals("Foot_Enemy")){
             for(int i = 0; i < currentEnemy.size; i++)
@@ -80,43 +60,14 @@ public class MyContactListener implements ContactListener {
                     break;
                 }
             playerOnContact--;
-            leftContact = false;
-            rightContact = false;
-        }
-        if(fa.getUserData() != null && fa.getUserData().equals("Border_Left")){
-            playerOnTheWall=0;
-        }
-        if(fb.getUserData() != null && fb.getUserData().equals("Border_Left")){
-            playerOnTheWall=0;
-        }
-        if(fa.getUserData() != null && fa.getUserData().equals("Border_Right")){
-            playerOnTheWall=0;
-        }
-        if(fb.getUserData() != null && fb.getUserData().equals("Border_Right")){
-            playerOnTheWall=0;
         }
     }
 
     public boolean isPlayerOnContact() { return playerOnContact > 0; }
 
-    public int isPlayerOnTheWall() { return playerOnTheWall; }
-
     public Array<Body> getHeartsToRemove() { return heartsToRemove;}
 
-    public void preSolve(Contact c, Manifold m) {
-
-        if(m.getLocalNormal().epsilonEquals(1,-0)){
-            leftContact = true;
-            rightContact = false;
-        }
-        if(m.getLocalNormal().epsilonEquals(-1,-0)){
-            rightContact = true;
-            leftContact = false;
-        }
-
-    }
-    public boolean isRightContact() { return rightContact; }
-    public boolean isLeftContact() { return leftContact; }
+    public void preSolve(Contact c, Manifold m) {}
 
     public int getContacts() { return playerOnContact; }
     public void postSolve(Contact c, ContactImpulse ci) {}

@@ -20,9 +20,7 @@ public class MyInput {
     }
 
     public static void update() {
-        for(int i=0;i<NUM_KEYS;i++){
-            pkeys[i] = keys[i];
-        }
+        System.arraycopy(keys, 0, pkeys, 0, NUM_KEYS);
     }
 
     public static void setKey(int i, boolean b){
