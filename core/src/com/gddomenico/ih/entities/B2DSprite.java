@@ -1,5 +1,6 @@
 package com.gddomenico.ih.entities;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -71,6 +72,21 @@ public class B2DSprite {
         sb.begin();
         sb.draw(animation.getFrame(),
                 flip ? (body.getPosition().x * PPM - width / 2) : (body.getPosition().x * PPM + width / 2),
+                (int) (body.getPosition().y * PPM - height / 2),
+                flip ? width : -width,
+                height);
+        sb.end();
+    }
+    public void render(SpriteBatch sb, OrthographicCamera cam) {
+
+        // flip sprite
+        boolean flip = rightArm;
+        //spriteBatch.draw(currentFrame, flip ? x+width : x, y, flip ? -width : width, height);
+        //sb.draw(animation.getFrame(), (body.getPosition().x * PPM - width / 2), (int) (body.getPosition().y * PPM - height / 2));
+
+        sb.begin();
+        sb.draw(animation.getFrame(),
+                flip ? (body.getPosition().x * PPM - width / 2 ) : (body.getPosition().x * PPM + width / 2),
                 (int) (body.getPosition().y * PPM - height / 2),
                 flip ? width : -width,
                 height);

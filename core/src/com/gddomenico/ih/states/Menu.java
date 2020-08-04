@@ -1,18 +1,11 @@
 package com.gddomenico.ih.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.gddomenico.ih.handlers.Content;
 import com.gddomenico.ih.handlers.GameStateManager;
 import com.gddomenico.ih.handlers.MyInput;
-import com.gddomenico.ih.states.GameState;
 import com.gddomenico.ih.invasorsHunt;
 
 public class Menu extends GameState {
@@ -23,7 +16,7 @@ public class Menu extends GameState {
     private final static String title = "Ivasors Hunt";
     
     private int currentItem = 0;
-    private String[] menuItems;
+    private final String[] menuItems;
     
     public Menu(GameStateManager gsm) {
         super(gsm);
@@ -31,7 +24,7 @@ public class Menu extends GameState {
         titleFont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
 
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
-        font.getData().setScale((float) (invasorsHunt.SCALE/4f));
+        font.getData().setScale(invasorsHunt.SCALE/4f);
 
 		invasorsHunt.res.getMusic("menu").play();
         
