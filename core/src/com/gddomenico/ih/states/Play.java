@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
+import com.gddomenico.ih.entities.B2DSprite;
 import com.gddomenico.ih.entities.Heart;
 import com.gddomenico.ih.handlers.*;
 import com.gddomenico.ih.invasorsHunt;
@@ -45,16 +46,15 @@ public class Play extends GameState {
     private float timer = 0;
     private float timer_death = 0;
 
-    private float timer_death = 0;
-
     private final Array<Heart> hearts = new Array<>();
 
     public Play(GameStateManager gsm) {
         super(gsm);
 
-        invasorsHunt.res.getMusic("play").play();
+        //invasorsHunt.res.getMusic("play").play();
 
         world = new World(new Vector2(0, 0), true);
+
         createPlayer();
         createBorder();
 
