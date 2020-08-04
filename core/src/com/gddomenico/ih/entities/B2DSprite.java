@@ -1,6 +1,7 @@
 package com.gddomenico.ih.entities;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -111,6 +112,23 @@ public class B2DSprite {
 
     public int getPlayerHits(){
         return playerHits;
+    }
+
+    public TextureRegion[] animateCharacter(Texture tex, int cols, int rows){
+
+        TextureRegion[][] tmp = new TextureRegion(tex).split(
+                tex.getWidth() / cols,
+                tex.getHeight() / rows);
+
+        TextureRegion[] sprites = new TextureRegion[cols*rows];
+
+        int index = 0;
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                sprites[index++]=tmp[i][j];
+            }
+        }
+        return sprites;
     }
 
     public boolean getRightArm () {

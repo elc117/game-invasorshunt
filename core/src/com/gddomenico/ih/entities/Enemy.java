@@ -15,29 +15,19 @@ public class Enemy extends B2DSprite {
 
 	private float attackDelay;
     private float timer = 0;
+    private float timer_walk = 0;
+
+    private final TextureRegion[] punch;
+    private final TextureRegion[] walk;
 	
 	public Enemy (Body body) {
 	    super(body);
 
         attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
 
-        int column = 12;
-        int row = 1;
-
-        Texture tex = invasorsHunt.res.getTexture("enemies");
-        TextureRegion[][] tmp = new TextureRegion(tex).split(
-                tex.getWidth() / column,
-                tex.getHeight() / row);
-
-        TextureRegion[] sprites = new TextureRegion[column*row];
-
-        int index = 0;
-        for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-                sprites[index++]=tmp[i][j];
-            }
-        }
-        setAnimation(sprites, 1 / 12f);
+        walk = animateCharacter(invasorsHunt.res.getTexture("enemies"), 12, 1);
+        punch = animateCharacter(invasorsHunt.res.getTexture("enemies_punch"), 21, 1);
+        setAnimation(walk);
         animation.setWalk(true);
 	}
 
@@ -71,6 +61,15 @@ public class Enemy extends B2DSprite {
     public void update(float dt, Body Player) {
         super.update(dt);
 
+        timer_walk += dt;
+        // Spawn a new enemy each a few seconds
+        if (timer_walk >= 1.08f) {
+            setAnimation(walk);
+
+            timer_walk -= 1.08f;
+        }
+
+
         FollowPlayer(Player);
     }
 
@@ -81,10 +80,14 @@ public class Enemy extends B2DSprite {
         playerHits = hits;
     }
 
-    public void hasPunched () { timer -= attackDelay; }
+    public void hasPunched () {
+        timer -= attackDelay;
+    }
+
     public void countTimer (float dt) { timer += dt; }
     public boolean canPunch () {
         if (timer >= attackDelay) {
+            setAnimation(punch, 1/30f);
             hasPunched();
             stop = true;
             attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);

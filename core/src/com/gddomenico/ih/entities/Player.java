@@ -14,18 +14,19 @@ public class Player extends B2DSprite{
     private final TextureRegion[] punch;
     private final TextureRegion[] walk;
 
+
 	public Player(Body body) {
 		super(body);
 
 		cl = new MyContactListener();
 
-		punch = animatePlayer(invasorsHunt.res.getTexture("main_punch"), 15, 1);
-        walk = animatePlayer(invasorsHunt.res.getTexture("main"), 3, 1);
+		punch = animateCharacter(invasorsHunt.res.getTexture("main_punch"), 15, 1);
+        walk = animateCharacter(invasorsHunt.res.getTexture("main"), 3, 1);
 
         setAnimation(walk);
 
 	}
-	
+
 
     public boolean handleInput() {
 
@@ -93,23 +94,6 @@ public class Player extends B2DSprite{
 
     public void setPlayerHits(int num){
 	    playerHits += num;
-    }
-
-    private TextureRegion[] animatePlayer(Texture tex, int cols, int rows){
-
-        TextureRegion[][] tmp = new TextureRegion(tex).split(
-                tex.getWidth() / cols,
-                tex.getHeight() / rows);
-
-        TextureRegion[] sprites = new TextureRegion[cols*rows];
-
-        int index = 0;
-        for (int i=0; i<rows; i++) {
-            for (int j=0; j<cols; j++) {
-                sprites[index++]=tmp[i][j];
-            }
-        }
-        return sprites;
     }
 
     public void getLife() { if(playerHits != 0) playerHits--; }
