@@ -68,8 +68,10 @@ public class Enemy extends B2DSprite {
         timer_walk += dt;
         // Spawn a new enemy each a few seconds
         if (timer_walk >= 1.08f) {
-            if(isDead)
+            if(isDead) {
                 setAnimation(death);
+                stop = true;
+            }
             else
                 setAnimation(walk);
 

@@ -50,17 +50,23 @@ public class invasorsHunt extends ApplicationAdapter {
 		res.getMusic("play").setVolume(0.2f);
 
 		res.loadTexture("images/enemies.png","enemies");
+		res.loadTexture("images/enemyIcon.png","icon");
+		res.loadTexture("images/mainIcon.png","mainIcon");
 		res.loadTexture("images/enemies_punch.png","enemies_punch");
 		res.loadTexture("images/enemies_death.png","enemies_death");
+
 		res.loadTexture("images/main.png","main");
 		res.loadTexture("images/main_punch.png","main_punch");
 		res.loadTexture("images/main_death.png","main_death");
 		res.loadTexture("images/heart.png","heart");
+
 		res.loadTexture("images/background2.png","background2");
 		res.loadTexture("images/background.jpg","background");
+
 		res.loadTexture("images/badlogic.png","menu");
 		res.loadTexture("images/slime.png", "slime");
 		res.loadTexture("images/lives.png", "life");
+		res.loadTexture("fonts/numbers.png", "numbers");
 
 		sb = new SpriteBatch();
 		cam = new OrthographicCamera();

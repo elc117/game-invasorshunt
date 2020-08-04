@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
+import com.gddomenico.ih.entities.B2DSprite;
 import com.gddomenico.ih.entities.Heart;
 import com.gddomenico.ih.handlers.*;
 import com.gddomenico.ih.invasorsHunt;
@@ -36,13 +37,13 @@ public class Play extends GameState {
     private int destroyedEnemies = 0;
 
     private final TextureRegion[] lifeBar;
-    private final BitmapFont enemiesIterator;
+    private final Animation enemiesIterator;
+    private final TextureRegion enemyIcon;
 
     private Player player;
     private final Array<Enemy> enemyBody = new Array<>();
 
     private float timer = 0;
-
     private float timer_death = 0;
 
     private float timer_end = 0;
@@ -52,39 +53,52 @@ public class Play extends GameState {
     public Play(GameStateManager gsm) {
         super(gsm);
 
-        invasorsHunt.res.getMusic("play").play();
+        //invasorsHunt.res.getMusic("play").play();
 
         world = new World(new Vector2(0, 0), true);
-        enemiesIterator = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
-        enemiesIterator.getData().setScale(invasorsHunt.SCALE/4f);
-        
+
         createPlayer();
+        createBorder();
 
         world.setContactListener(player.getContactListener());
 
-        b2dr = new Box2DDebugRenderer();
-        //It's going to receive the number to make the enemy spawn more far from the main
-        for(int i = 0; i < activeEnemies; i++){
-            enemyBody.add(createEnemy(2));
-        }
+        int cols = 10;
+        int rows = 1;
+        Texture tex = invasorsHunt.res.getTexture("numbers");
+        TextureRegion[][] tmp = new TextureRegion(tex).split(
+                tex.getWidth() / cols,
+                tex.getHeight() / rows);
+        TextureRegion[] sprites = new TextureRegion[cols*rows];
 
-        createBorder();
+        int index = 0;
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                sprites[index++]=tmp[i][j];
+            }
+        }
+        enemiesIterator = new Animation(sprites);
 
         int row = 11;
         int column = 1;
-
-        Texture tex = invasorsHunt.res.getTexture("life");
-        TextureRegion[][] tmp = new TextureRegion(tex).split(
+        tex = invasorsHunt.res.getTexture("life");
+        TextureRegion[][] tmp2 = new TextureRegion(tex).split(
                 tex.getWidth() / column,
                 tex.getHeight() / row);
 
         lifeBar = new TextureRegion[row*column];
-
-        int index = 0;
+        index = 0;
         for (int i=0; i<row; i++) {
             for (int j=0; j<column; j++) {
-                lifeBar[index++]=tmp[i][j];
+                lifeBar[index++]=tmp2[i][j];
             }
+        }
+
+        enemyIcon = new TextureRegion(invasorsHunt.res.getTexture("icon"));
+
+        b2dr = new Box2DDebugRenderer();
+        //It's going to receive the number to make the enemy spawn more far from the main
+        for(int i = 0; i < activeEnemies; i++){
+            enemyBody.add(createEnemy((int) (cam.position.x / PPM) + 1));
         }
         //set up b2d cam
         b2dCam = new OrthographicCamera();
@@ -182,10 +196,9 @@ public class Play extends GameState {
         int height = lifeBar[0].getRegionHeight();
         int width = lifeBar[0].getRegionWidth();
 
-        String denm = "Inimigos Restando: " + (NUM_ENEMIES - destroyedEnemies);
-
-        GlyphLayout layout = new GlyphLayout();
-        layout.setText(enemiesIterator, denm);
+        int denm = NUM_ENEMIES - destroyedEnemies;
+        int width2 = enemiesIterator.getFrame(0).getRegionWidth();
+        int height2 = enemiesIterator.getFrame(0).getRegionHeight();
 
         sb.begin();
         sb.draw(invasorsHunt.res.getTexture("background"), -100, 0,600, invasorsHunt.V_HEIGHT);
@@ -194,12 +207,21 @@ public class Play extends GameState {
                 invasorsHunt.V_HEIGHT - height + 10,
                 width / 2f,
                 height / 2f);
-        enemiesIterator.draw(
-                sb,
-                denm,
-                cam.position.x + 15,
-                (invasorsHunt.V_HEIGHT - layout.height + 5)
-        );
+        sb.draw(enemyIcon,
+                cam.position.x - 1.75f * enemyIcon.getRegionWidth() + invasorsHunt.V_WIDTH / 2f,
+                invasorsHunt.V_HEIGHT - enemyIcon.getRegionHeight() / 2f - 5,
+                enemyIcon.getRegionWidth() / 2f,
+                enemyIcon.getRegionHeight() / 2f);
+        sb.draw(enemiesIterator.getFrame(denm/10),
+                cam.position.x - 1.5f * width2 + invasorsHunt.V_WIDTH / 2f,
+                invasorsHunt.V_HEIGHT - height2 / 2f - 5,
+                width2 / 2f,
+                height2 / 2f);
+        sb.draw(enemiesIterator.getFrame(denm%10),
+                cam.position.x - width2 + invasorsHunt.V_WIDTH / 2f,
+                invasorsHunt.V_HEIGHT - height2 / 2f - 5,
+                width2 / 2f,
+                height2 / 2f);
         sb.end();
         //draw a heart
         if(hearts.notEmpty())
