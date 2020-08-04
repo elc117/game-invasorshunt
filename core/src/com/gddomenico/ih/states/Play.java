@@ -45,6 +45,8 @@ public class Play extends GameState {
 
     private float timer_death = 0;
 
+    private float timer_end = 0;
+
     private final Array<Heart> hearts = new Array<>();
 
     public Play(GameStateManager gsm) {
@@ -120,8 +122,6 @@ public class Play extends GameState {
         for(int i=0;i<enemyBody.size;i++)
             if(enemyBody.get(i).destroyEnemy())
                 enemyBody.get(i).setDeathTextureRegion();
-
-
         if(timer_death >= 1.2f){
             for(int i=0;i<enemyBody.size;i++){
                 if(enemyBody.get(i).destroyEnemy()){
@@ -136,7 +136,6 @@ public class Play extends GameState {
                     }
                 }
             }
-
             timer_death -= 1.2f;
         }
 
@@ -144,8 +143,14 @@ public class Play extends GameState {
         boolean victory = destroyedEnemies >= NUM_ENEMIES;
 
         //Perdeu o jogo
-        if(player.getPlayerHits()>=PLAYER_LIVES || victory)
-            gsm.setState(GameStateManager.END);
+        if(player.getPlayerHits()>=PLAYER_LIVES || victory){
+            player.setDeath();
+            timer_end+=dt;
+            if(timer_end>=2f){
+                gsm.setState(GameStateManager.END);
+            }
+        }
+
 
         world.step(dt, 6, 2);
 

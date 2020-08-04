@@ -29,7 +29,7 @@ public class Enemy extends B2DSprite {
         attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
 
         walk = animateCharacter(invasorsHunt.res.getTexture("enemies"), 12, 1);
-        punch = animateCharacter(invasorsHunt.res.getTexture("enemies_punch"), 21, 1);
+        punch = animateCharacter(invasorsHunt.res.getTexture("enemies_punch"), 13, 1);
         death = animateCharacter(invasorsHunt.res.getTexture("enemies_death"), 11, 1);
         setAnimation(walk);
 
