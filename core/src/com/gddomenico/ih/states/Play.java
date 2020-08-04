@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.gddomenico.ih.entities.Heart;
 import com.gddomenico.ih.handlers.*;
 import com.gddomenico.ih.invasorsHunt;
@@ -41,6 +42,8 @@ public class Play extends GameState {
     private final Array<Enemy> enemyBody = new Array<>();
 
     private float timer = 0;
+
+    private float timer_death = 0;
 
     private final Array<Heart> hearts = new Array<>();
 
@@ -95,7 +98,7 @@ public class Play extends GameState {
         timer += dt;
         // Spawn a new enemy each a few seconds
         if (timer >= 1.7f && activeEnemies < NUM_ENEMIES && enemyBody.size < 6) {
-            enemyBody.add(createEnemy(2));
+            enemyBody.add(createEnemy((int) (cam.position.x / PPM) + 1));
             activeEnemies++;
 
             timer -= 3.4f;
@@ -112,19 +115,31 @@ public class Play extends GameState {
             enemyBody.get(i).update(dt, player.getBody());
         }
 
-        // Seeks if an enemy or hearth needs to be destroyed
-        for(int i=0;i<enemyBody.size;i++){
-            if(enemyBody.get(i).destroyEnemy()){
-                Body b = enemyBody.get(i).getBody();
-                if(b.getType()!=null){
-                    if(getRand(0,101)%10==0)
-                        createHearts(enemyBody.get(i).getPosition());
-                    world.destroyBody(b);
-                    enemyBody.removeIndex(i);
-                    destroyedEnemies++;
+        // Seeks if an enemy or heart needs to be destroyed
+        timer_death += dt;
+        for(int i=0;i<enemyBody.size;i++)
+            if(enemyBody.get(i).destroyEnemy())
+                enemyBody.get(i).setDeathTextureRegion();
+
+
+        if(timer_death >= 1.2f){
+            for(int i=0;i<enemyBody.size;i++){
+                if(enemyBody.get(i).destroyEnemy()){
+
+                    Body b = enemyBody.get(i).getBody();
+                    if(b.getType()!=null){
+                        if(getRand(0,101)%10==0)
+                            createHearts(enemyBody.get(i).getPosition());
+                        world.destroyBody(b);
+                        enemyBody.removeIndex(i);
+                        destroyedEnemies++;
+                    }
                 }
             }
+
+            timer_death -= 1.2f;
         }
+
 
         boolean victory = destroyedEnemies >= NUM_ENEMIES;
 

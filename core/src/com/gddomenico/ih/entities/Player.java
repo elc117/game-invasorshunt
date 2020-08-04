@@ -93,7 +93,7 @@ public class Player extends B2DSprite{
 
 
     public void setPlayerHits(int num){
-	    playerHits += num;
+	    playerHits += 0;
     }
 
     public void getLife() { if(playerHits != 0) playerHits--; }

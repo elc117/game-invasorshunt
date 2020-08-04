@@ -19,6 +19,9 @@ public class Enemy extends B2DSprite {
 
     private final TextureRegion[] punch;
     private final TextureRegion[] walk;
+    private final TextureRegion[] death;
+
+    private boolean isDead;
 	
 	public Enemy (Body body) {
 	    super(body);
@@ -27,8 +30,9 @@ public class Enemy extends B2DSprite {
 
         walk = animateCharacter(invasorsHunt.res.getTexture("enemies"), 12, 1);
         punch = animateCharacter(invasorsHunt.res.getTexture("enemies_punch"), 21, 1);
+        death = animateCharacter(invasorsHunt.res.getTexture("enemies_death"), 11, 1);
         setAnimation(walk);
-        animation.setWalk(true);
+
 	}
 
 	/**
@@ -64,12 +68,15 @@ public class Enemy extends B2DSprite {
         timer_walk += dt;
         // Spawn a new enemy each a few seconds
         if (timer_walk >= 1.08f) {
-            setAnimation(walk);
+            if(isDead)
+                setAnimation(death);
+            else
+                setAnimation(walk);
 
             timer_walk -= 1.08f;
         }
 
-
+        animation.setWalk(true);
         FollowPlayer(Player);
     }
 
@@ -100,8 +107,10 @@ public class Enemy extends B2DSprite {
      * @return true if the enemy is on the left side of the player
      */
     public boolean getSide () { return isOnRight; }
+    public void setDeathTextureRegion() {  isDead=true;}
     public boolean destroyEnemy() {
         return playerHits >= ENEMY_LIVES;
     }
+    public boolean isAnimationFinished() { return animation.getFrame(0) == walk[0];}
    
 }
