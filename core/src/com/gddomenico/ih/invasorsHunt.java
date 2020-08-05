@@ -57,6 +57,7 @@ public class invasorsHunt extends ApplicationAdapter {
 
 		res.loadTexture("images/main.png","main");
 		res.loadTexture("images/main_punch.png","main_punch");
+		res.loadTexture("images/main_death.png","main_death");
 		res.loadTexture("images/heart.png","heart");
 
 		res.loadTexture("images/background2.png","background2");

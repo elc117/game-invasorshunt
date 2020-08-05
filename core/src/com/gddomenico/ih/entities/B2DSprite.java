@@ -15,6 +15,10 @@ import static com.gddomenico.ih.handlers.B2DVars.PPM;
  */
 public class B2DSprite {
 
+    protected TextureRegion[] punch;
+    protected TextureRegion[] walk;
+    protected TextureRegion[] death;
+
     protected int flash = 0;
 
     protected Integer playerHits = 0;
@@ -30,6 +34,7 @@ public class B2DSprite {
     public static final float delay = 1/3f;
 
     protected boolean stop = false;
+    protected boolean isDead;
 
     public B2DSprite(Body body) {
         this.body = body;
@@ -127,6 +132,15 @@ public class B2DSprite {
         }
         return sprites;
     }
+
+    public void setDeathCondition() {
+        isDead = true;
+        stop = true;
+        animation.setWalk(true);
+        timeStop = 0;
+        setAnimation(death);
+    }
+    public boolean getDeathCondition() {  return isDead; }
 
     public boolean getRightArm () {
         return rightArm;

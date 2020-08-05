@@ -16,12 +16,6 @@ public class Enemy extends B2DSprite {
 	private float attackDelay;
     private float timer = 0;
 
-    private final TextureRegion[] punch;
-    private final TextureRegion[] walk;
-    private final TextureRegion[] death;
-
-    private boolean isDead;
-	
 	public Enemy (Body body) {
 	    super(body);
 
@@ -103,12 +97,7 @@ public class Enemy extends B2DSprite {
      * @return true if the enemy is on the left side of the player
      */
     public boolean getSide () { return isOnRight; }
-    public void setDeathTextureRegion() {
-        stop = true;
-        isDead=true;
-        setAnimation(death);
-    }
-    public boolean getDeathTextureRegion() {  return isDead;}
+
     public boolean destroyEnemy() {
         return playerHits >= ENEMY_LIVES;
     }

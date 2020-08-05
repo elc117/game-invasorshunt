@@ -119,7 +119,7 @@ public class Play extends GameState {
             setPlayerHits(dt);
 
         // Punches if player delay is not set
-        if (!player.getStop() && player.handleInput() ) {
+        if (!player.getDeathCondition() && !player.getStop() && player.handleInput()) {
             getBodiesToRemove(dt);
         }
 
@@ -131,8 +131,8 @@ public class Play extends GameState {
 
         // Seeks if an enemy or heart needs to be destroyed
         for(int i=0;i<enemyBody.size;i++)
-            if(enemyBody.get(i).destroyEnemy() && !enemyBody.get(i).getDeathTextureRegion()) {
-                enemyBody.get(i).setDeathTextureRegion();
+            if(enemyBody.get(i).destroyEnemy() && !enemyBody.get(i).getDeathCondition()) {
+                enemyBody.get(i).setDeathCondition();
                 world.destroyBody(enemyBody.get(i).getBody());
             }
 
@@ -150,8 +150,12 @@ public class Play extends GameState {
         boolean victory = destroyedEnemies >= NUM_ENEMIES;
 
         //Perdeu o jogo
-        if(player.getPlayerHits()>=PLAYER_LIVES || victory)
+        if(player.getPlayerHits()>=PLAYER_LIVES && !player.getDeathCondition()) {
+            player.setDeathCondition();
+        }
+        if(player.getDeathCondition() && player.getDefeat()) {
             gsm.setState(GameStateManager.END);
+        }
 
         world.step(dt, 6, 2);
 
