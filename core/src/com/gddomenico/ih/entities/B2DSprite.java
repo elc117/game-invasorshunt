@@ -1,6 +1,5 @@
 package com.gddomenico.ih.entities;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,8 +14,11 @@ import static com.gddomenico.ih.handlers.B2DVars.PPM;
  */
 public class B2DSprite {
 
-    protected int flash = 0;
+    protected TextureRegion[] punch;
+    protected TextureRegion[] walk;
+    protected TextureRegion[] death;
 
+    protected int flash = 0;
     protected Integer playerHits = 0;
 
     protected boolean rightArm = false;
@@ -26,10 +28,11 @@ public class B2DSprite {
     protected float width;
     protected float height;
 
-    private float timeStop = 0f;
+    protected float timeStop = 0f;
     public static final float delay = 1/3f;
 
     protected boolean stop = false;
+    protected boolean isDead;
 
     public B2DSprite(Body body) {
         this.body = body;
@@ -74,21 +77,7 @@ public class B2DSprite {
                 flip ? width : -width,
                 height);
         sb.end();
-    }
-    public void render(SpriteBatch sb, OrthographicCamera cam) {
 
-        // flip sprite
-        boolean flip = rightArm;
-        //spriteBatch.draw(currentFrame, flip ? x+width : x, y, flip ? -width : width, height);
-        //sb.draw(animation.getFrame(), (body.getPosition().x * PPM - width / 2), (int) (body.getPosition().y * PPM - height / 2));
-
-        sb.begin();
-        sb.draw(animation.getFrame(),
-                flip ? (body.getPosition().x * PPM - width / 2 ) : (body.getPosition().x * PPM + width / 2),
-                (int) (body.getPosition().y * PPM - height / 2),
-                flip ? width : -width,
-                height);
-        sb.end();
     }
 
     public void setFlash (int flash) {
@@ -101,6 +90,7 @@ public class B2DSprite {
 
     public Body getBody() { return body; }
     public Vector2 getPosition() { return body.getPosition(); }
+
     public float getWidth() { return width; }
     public float getHeight() { return height; }
 
@@ -127,6 +117,15 @@ public class B2DSprite {
         }
         return sprites;
     }
+
+    public void setDeathCondition() {
+        animation.setWalk(true);
+        isDead = true;
+        stop = true;
+        timeStop = 0;
+        setAnimation(death);
+    }
+    public boolean getDeathCondition() {  return isDead; }
 
     public boolean getRightArm () {
         return rightArm;

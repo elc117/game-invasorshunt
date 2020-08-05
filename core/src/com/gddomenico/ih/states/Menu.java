@@ -21,8 +21,8 @@ public class Menu extends GameState {
     private int currentItem = 0;
     private final String[] menuItems;
 
-    private TextureRegion enemyIcon = new TextureRegion(invasorsHunt.res.getTexture("icon"));
-	private TextureRegion mainIcon = new TextureRegion(invasorsHunt.res.getTexture("mainIcon"));
+    private final TextureRegion enemyIcon = new TextureRegion(invasorsHunt.res.getTexture("enemyIcon"));
+	private final TextureRegion mainIcon = new TextureRegion(invasorsHunt.res.getTexture("mainIcon"));
 
 	public Menu(GameStateManager gsm) {
         super(gsm);
@@ -32,7 +32,7 @@ public class Menu extends GameState {
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
         font.getData().setScale(invasorsHunt.SCALE/4f);
 
-		//invasorsHunt.res.getMusic("menu").play();
+		invasorsHunt.res.getMusic("menu").play();
 
         menuItems = new String[] {
         	"Jogar",

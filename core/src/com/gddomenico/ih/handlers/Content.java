@@ -12,14 +12,14 @@ import com.badlogic.gdx.graphics.Texture;
  */
 public class Content {
 
-    private HashMap<String, Texture> textures;
-    private HashMap<String, Music> music;
-    private HashMap<String, Sound> sounds;
+    private final HashMap<String, Texture> textures;
+    private final HashMap<String, Music> music;
+    private final HashMap<String, Sound> sounds;
 
     public Content() {
-        textures = new HashMap<String, Texture>();
-        music = new HashMap<String, Music>();
-        sounds = new HashMap<String, Sound>();
+        textures = new HashMap<>();
+        music = new HashMap<>();
+        sounds = new HashMap<>();
     }
 
 
@@ -111,24 +111,6 @@ public class Content {
     // other
 
     public void removeAll() {
-		/*Iterator<Map.Entry<String, Texture>> iter1 = textures.entrySet().iterator();
-		while(iter1.hasNext()) {
-			Texture tex = iter1.next().getValue();
-			tex.dispose();
-			iter1.remove();
-		}
-		Iterator<Map.Entry<String, Music>> iter2 = music.entrySet().iterator();
-		while(iter2.hasNext()) {
-			Music music = iter2.next().getValue();
-			music.dispose();
-			iter2.remove();
-		}
-		Iterator<Map.Entry<String, Sound>> iter3 = sounds.entrySet().iterator();
-		while(iter3.hasNext()) {
-			Sound sound = iter3.next().getValue();
-			sound.dispose();
-			iter3.remove();
-		}*/
         for(Object o : textures.values()) {
             Texture tex = (Texture) o;
             tex.dispose();

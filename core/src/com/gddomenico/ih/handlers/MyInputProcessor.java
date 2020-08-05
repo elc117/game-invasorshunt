@@ -39,6 +39,9 @@ public class MyInputProcessor extends InputAdapter {
         if(k == Input.Keys.LEFT){
             MyInput.setKey(MyInput.BUTTON_LEFT, true);
         }
+        if(k == Input.Keys.ESCAPE){
+            MyInput.setKey(MyInput.BUTTON_ESC, true);
+        }
         return true;
     }
 
@@ -75,6 +78,9 @@ public class MyInputProcessor extends InputAdapter {
         }
         if(k == Input.Keys.LEFT){
             MyInput.setKey(MyInput.BUTTON_LEFT, false);
+        }
+        if(k == Input.Keys.ESCAPE){
+            MyInput.setKey(MyInput.BUTTON_ESC, true);
         }
         return true;
     }
