@@ -69,10 +69,10 @@ public class Enemy extends B2DSprite {
             setAnimation(walk);
         }
         if(animation.getFrame() == death[0] && !stop) {
-            isDead = false;
+            playerHits = -1;
         }
 
-        if(!isDead && animation.getFrame() != death[0])
+        if(!isDead)
             FollowPlayer(Player);
     }
 

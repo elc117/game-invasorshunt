@@ -131,15 +131,14 @@ public class Play extends GameState {
 
         // Seeks if an enemy or heart needs to be destroyed
         for(int i=0;i<enemyBody.size;i++)
-            if(enemyBody.get(i).destroyEnemy()) {
-                enemyBody.get(i).setEnemyHits(-1);
+            if(enemyBody.get(i).destroyEnemy() && !enemyBody.get(i).getDeathTextureRegion()) {
                 enemyBody.get(i).setDeathTextureRegion();
                 world.destroyBody(enemyBody.get(i).getBody());
             }
 
 
         for(int i=0;i<enemyBody.size;i++){
-            if(enemyBody.get(i).getPlayerHits() == -1 && !enemyBody.get(i).getDeathTextureRegion()){
+            if(enemyBody.get(i).getPlayerHits() == -1){
                 if(getRand(0,101)%10==0)
                     createHearts(enemyBody.get(i).getPosition());
                 enemyBody.removeIndex(i);
