@@ -1,7 +1,5 @@
 package com.gddomenico.ih.states;
 
-import static com.gddomenico.ih.handlers.B2DVars.PPM;
-import static com.gddomenico.ih.handlers.B2DVars.PLAYER_LIVES;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -21,6 +19,8 @@ import com.gddomenico.ih.entities.Enemy;
 import com.gddomenico.ih.entities.Player;
 
 import java.util.Random;
+
+import static com.gddomenico.ih.handlers.B2DVars.*;
 
 
 public class Play extends GameState {
@@ -44,9 +44,6 @@ public class Play extends GameState {
     private final Array<Enemy> enemyBody = new Array<>();
 
     private float timer = 0;
-    private float timer_death = 0;
-
-    private float timer_end = 0;
 
     private final Array<Heart> hearts = new Array<>();
 
@@ -107,18 +104,19 @@ public class Play extends GameState {
 
     public void update(float dt) {
 
-        //Set a hit to the player every enemy delay, each enemy has one
-        if (player.getContactListener().isPlayerOnContact())
-            setPlayerHits(dt);
-
         timer += dt;
         // Spawn a new enemy each a few seconds
         if (timer >= 1.7f && activeEnemies < NUM_ENEMIES && enemyBody.size < 6) {
-            enemyBody.add(createEnemy((int) (cam.position.x / PPM) + 1));
+            enemyBody.add(createEnemy((int) (cam.position.x / PPM) + 2));
             activeEnemies++;
 
             timer -= 3.4f;
+
         }
+
+        //Set a hit to the player every enemy delay, each enemy has one
+        if (player.getContactListener().isPlayerOnContact())
+            setPlayerHits(dt);
 
         // Punches if player delay is not set
         if (!player.getStop() && player.handleInput() ) {
@@ -127,44 +125,34 @@ public class Play extends GameState {
 
         // Update each player/enemy
     	player.update(dt);
-        for(int i = 0; i < enemyBody.size; i++){
+        for(int i = 0; i < enemyBody.size; i++)
             enemyBody.get(i).update(dt, player.getBody());
-        }
+
 
         // Seeks if an enemy or heart needs to be destroyed
-        timer_death += dt;
         for(int i=0;i<enemyBody.size;i++)
-            if(enemyBody.get(i).destroyEnemy())
+            if(enemyBody.get(i).destroyEnemy()) {
+                enemyBody.get(i).setEnemyHits(-1);
                 enemyBody.get(i).setDeathTextureRegion();
-        if(timer_death >= 1.2f){
-            for(int i=0;i<enemyBody.size;i++){
-                if(enemyBody.get(i).destroyEnemy()){
-
-                    Body b = enemyBody.get(i).getBody();
-                    if(b.getType()!=null){
-                        if(getRand(0,101)%10==0)
-                            createHearts(enemyBody.get(i).getPosition());
-                        world.destroyBody(b);
-                        enemyBody.removeIndex(i);
-                        destroyedEnemies++;
-                    }
-                }
+                world.destroyBody(enemyBody.get(i).getBody());
             }
-            timer_death -= 1.2f;
+
+
+        for(int i=0;i<enemyBody.size;i++){
+            if(enemyBody.get(i).getPlayerHits() == -1 && !enemyBody.get(i).getDeathTextureRegion()){
+                if(getRand(0,101)%10==0)
+                    createHearts(enemyBody.get(i).getPosition());
+                enemyBody.removeIndex(i);
+                destroyedEnemies++;
+            }
         }
 
 
         boolean victory = destroyedEnemies >= NUM_ENEMIES;
 
         //Perdeu o jogo
-        if(player.getPlayerHits()>=PLAYER_LIVES || victory){
-            player.setDeath();
-            timer_end+=dt;
-            if(timer_end>=2f){
-                gsm.setState(GameStateManager.END);
-            }
-        }
-
+        if(player.getPlayerHits()>=PLAYER_LIVES || victory)
+            gsm.setState(GameStateManager.END);
 
         world.step(dt, 6, 2);
 

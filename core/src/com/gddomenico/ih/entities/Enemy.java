@@ -15,7 +15,6 @@ public class Enemy extends B2DSprite {
 
 	private float attackDelay;
     private float timer = 0;
-    private float timer_walk = 0;
 
     private final TextureRegion[] punch;
     private final TextureRegion[] walk;
@@ -29,10 +28,11 @@ public class Enemy extends B2DSprite {
         attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
 
         walk = animateCharacter(invasorsHunt.res.getTexture("enemies"), 12, 1);
-        punch = animateCharacter(invasorsHunt.res.getTexture("enemies_punch"), 13, 1);
+        punch = animateCharacter(invasorsHunt.res.getTexture("enemies_punch"), 8, 1);
         death = animateCharacter(invasorsHunt.res.getTexture("enemies_death"), 11, 1);
-        setAnimation(walk);
 
+        animation.setWalk(true);
+        setAnimation(walk);
 	}
 
 	/**
@@ -65,21 +65,15 @@ public class Enemy extends B2DSprite {
     public void update(float dt, Body Player) {
         super.update(dt);
 
-        timer_walk += dt;
-        // Spawn a new enemy each a few seconds
-        if (timer_walk >= 1.08f) {
-            if(isDead) {
-                setAnimation(death);
-                stop = true;
-            }
-            else
-                setAnimation(walk);
-
-            timer_walk -= 1.08f;
+        if(animation.getFrame() == punch[0] && !stop) {
+            setAnimation(walk);
+        }
+        if(animation.getFrame() == death[0] && !stop) {
+            isDead = false;
         }
 
-        animation.setWalk(true);
-        FollowPlayer(Player);
+        if(!isDead && animation.getFrame() != death[0])
+            FollowPlayer(Player);
     }
 
     public void setEnemyHits() {
@@ -96,7 +90,7 @@ public class Enemy extends B2DSprite {
     public void countTimer (float dt) { timer += dt; }
     public boolean canPunch () {
         if (timer >= attackDelay) {
-            setAnimation(punch, 1/30f);
+            setAnimation(punch);
             hasPunched();
             stop = true;
             attackDelay = Play.getRand(3,12)/(float) Play.getRand(3,5);
@@ -109,7 +103,12 @@ public class Enemy extends B2DSprite {
      * @return true if the enemy is on the left side of the player
      */
     public boolean getSide () { return isOnRight; }
-    public void setDeathTextureRegion() {  isDead=true;}
+    public void setDeathTextureRegion() {
+        stop = true;
+        isDead=true;
+        setAnimation(death);
+    }
+    public boolean getDeathTextureRegion() {  return isDead;}
     public boolean destroyEnemy() {
         return playerHits >= ENEMY_LIVES;
     }

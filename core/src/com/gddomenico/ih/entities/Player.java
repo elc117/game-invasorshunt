@@ -12,10 +12,8 @@ public class Player extends B2DSprite{
     private final MyContactListener cl;
 
     private final TextureRegion[] punch;
-    private final TextureRegion[] death;
     private final TextureRegion[] walk;
 
-    private boolean isDead=false;
 
 	public Player(Body body) {
 		super(body);
@@ -24,28 +22,15 @@ public class Player extends B2DSprite{
 
 		punch = animateCharacter(invasorsHunt.res.getTexture("main_punch"), 15, 1);
         walk = animateCharacter(invasorsHunt.res.getTexture("main"), 3, 1);
-        death = animateCharacter(invasorsHunt.res.getTexture("main_death"), 12, 1);
 
         setAnimation(walk);
 
 	}
 
-    public void update(float dt) {
-        super.update(dt);
-
-
-            if(isDead)
-                setAnimation(death);
-
-
-        animation.setWalk(true);
-
-    }
-
 
     public boolean handleInput() {
 
-        if (animation.getFrame(0) == punch[0])
+        if (animation.getFrame() == punch[0])
             setAnimation(walk);
 
         if(MyInput.isDown(MyInput.BUTTON_SPACE)){
@@ -57,7 +42,8 @@ public class Player extends B2DSprite{
 
             body.setLinearVelocity(velX - (velX/4f) , 0);
 
-            animation.setWalk(false);
+            if(animation.getFrame(0) == walk[0])
+                animation.setWalk(false);
         }
         else {
 
@@ -106,10 +92,9 @@ public class Player extends B2DSprite{
         return false;
     }
 
-    public void setDeath() {  isDead=true;}
-    public boolean getDeath() {  return isDead;}
+
     public void setPlayerHits(int num){
-	    playerHits += num;
+	    playerHits += 0;
     }
 
     public void getLife() { if(playerHits != 0) playerHits--; }
