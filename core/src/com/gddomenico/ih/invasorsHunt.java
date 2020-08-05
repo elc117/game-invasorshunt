@@ -2,9 +2,7 @@ package com.gddomenico.ih;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gddomenico.ih.handlers.Content;
 import com.gddomenico.ih.handlers.GameStateManager;
@@ -12,9 +10,6 @@ import com.gddomenico.ih.handlers.MyInput;
 import com.gddomenico.ih.handlers.MyInputProcessor;
 
 public class invasorsHunt extends ApplicationAdapter {
-
-	SpriteBatch batch;
-	Texture img;
 
 	public static final  String TITLE = "Invasors Hunt";
 	public static final int V_WIDTH = 320;
@@ -37,39 +32,50 @@ public class invasorsHunt extends ApplicationAdapter {
 
 		Gdx.input.setInputProcessor(new MyInputProcessor());
 
+		// Load all assets
 		res = new Content();
 
+		// Sound effects
 		res.loadSound("sounds/punch.wav", "punch");
 		res.loadSound("sounds/missed.wav", "miss");
+		res.loadSound("sounds/lose.wav", "lose");
+		res.loadSound("sounds/win.wav", "win");
 
+		// Music
 		res.loadMusic("sounds/menu.wav","menu");
 		res.loadMusic("sounds/play.wav","play");
 		res.getMusic("menu").setLooping(false);
-		res.getMusic("menu").setVolume(0.2f);
+		res.getMusic("menu").setVolume(0.5f);
 		res.getMusic("play").setLooping(true);
-		res.getMusic("play").setVolume(0.2f);
+		res.getMusic("play").setVolume(0.5f);
 
+		// Enemy textures
+		res.loadTexture("images/enemyIcon.png","enemyIcon");
 		res.loadTexture("images/enemies.png","enemies");
-		res.loadTexture("images/enemyIcon.png","icon");
-		res.loadTexture("images/mainIcon.png","mainIcon");
 		res.loadTexture("images/enemies_punch.png","enemies_punch");
 		res.loadTexture("images/enemies_death.png","enemies_death");
 
+<<<<<<< Updated upstream
+=======
+		// Player textures
+		res.loadTexture("images/mainIcon.png","mainIcon");
+>>>>>>> Stashed changes
 		res.loadTexture("images/main.png","main");
+		res.loadTexture("images/main_win.png","main_win");
 		res.loadTexture("images/main_punch.png","main_punch");
 		res.loadTexture("images/main_death.png","main_death");
-		res.loadTexture("images/main_win.png","main_win");
-		res.loadTexture("images/heart.png","heart");
 
+		// Game textures
 		res.loadTexture("images/background2.png","background2");
 		res.loadTexture("images/background.jpg","background");
+		res.loadTexture("fonts/numbers.png", "numbers");
+		res.loadTexture("images/heart.png","heart");
+		res.loadTexture("images/lives.png", "life");
 
+		// Menu and end game conditions
 		res.loadTexture("images/badlogic.png","menu");
 		res.loadTexture("images/win_text.png","win_text");
 		res.loadTexture("images/lose_text.png","lose_text");
-		res.loadTexture("images/slime.png", "slime");
-		res.loadTexture("images/lives.png", "life");
-		res.loadTexture("fonts/numbers.png", "numbers");
 
 		sb = new SpriteBatch();
 		cam = new OrthographicCamera();

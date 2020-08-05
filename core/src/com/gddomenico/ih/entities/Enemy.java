@@ -2,8 +2,6 @@ package com.gddomenico.ih.entities;
 
 import static com.gddomenico.ih.handlers.B2DVars.ENEMY_LIVES;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.gddomenico.ih.invasorsHunt;
@@ -42,14 +40,12 @@ public class Enemy extends B2DSprite {
 
         isOnRight = px > 0;
 
-        float hipotenusa = (float) Math.sqrt((px * px) + (py * py));
+        float sqrt = (float) Math.sqrt((px * px) + (py * py));
 
-        float cos = (px / hipotenusa) * 0.5f;
-        float sin = (py / hipotenusa) * 0.5f;
+        float cos = (px / sqrt) * 0.5f;
+        float sin = (py / sqrt) * 0.5f;
 
-        //System.out.println("hipot: " + hipotenusa);
-
-        if(hipotenusa < 0.2 || stop)
+        if(sqrt < 0.2 || stop)
             body.setLinearVelocity(0, 0);
         else
             body.setLinearVelocity(cos, sin);
@@ -59,9 +55,11 @@ public class Enemy extends B2DSprite {
     public void update(float dt, Body Player) {
         super.update(dt);
 
+        // Analyzes if the player is punching to set punch animation
         if(animation.getFrame() == punch[0] && !stop) {
             setAnimation(walk);
         }
+        // Analyzes if the player is dead to set death animation
         if(animation.getFrame() == death[0] && !stop) {
             playerHits = -1;
         }
@@ -101,6 +99,5 @@ public class Enemy extends B2DSprite {
     public boolean destroyEnemy() {
         return playerHits >= ENEMY_LIVES;
     }
-    public boolean isAnimationFinished() { return animation.getFrame(0) == walk[0];}
    
 }

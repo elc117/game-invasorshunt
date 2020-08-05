@@ -4,14 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Timer;
-import com.gddomenico.ih.entities.B2DSprite;
 import com.gddomenico.ih.entities.Heart;
 import com.gddomenico.ih.handlers.*;
 import com.gddomenico.ih.invasorsHunt;
@@ -25,26 +21,25 @@ import static com.gddomenico.ih.handlers.B2DVars.*;
 
 public class Play extends GameState {
 
-    private static final boolean debug = false;
+    private static final boolean debug = true;
 
     private final World world;
     private final Box2DDebugRenderer b2dr;
 
     private final OrthographicCamera b2dCam;
-    
-    private static final int NUM_ENEMIES = 5;
+
+    // Max enemies and enemies iterator
+    private static final int NUM_ENEMIES = 50;
     private int activeEnemies = 5;
     private int destroyedEnemies = 0;
+    private float timer = 0;
 
-    private final TextureRegion[] lifeBar;
-    private final Animation enemiesIterator;
-    private final TextureRegion enemyIcon;
+    private TextureRegion[] lifeBar;
+    private Animation enemiesIterator;
+    private TextureRegion enemyIcon;
 
     private Player player;
     private final Array<Enemy> enemyBody = new Array<>();
-
-    private float timer = 0;
-
     private final Array<Heart> hearts = new Array<>();
 
     public Play(GameStateManager gsm) {
@@ -56,53 +51,28 @@ public class Play extends GameState {
 
         createPlayer();
         createBorder();
+        createLifeBar(invasorsHunt.res.getTexture("life"), 1 , 11);
+        createEnemyIterator(invasorsHunt.res.getTexture("enemyIcon"), invasorsHunt.res.getTexture("numbers"), 10 , 1);
 
         world.setContactListener(player.getContactListener());
 
-        int cols = 10;
-        int rows = 1;
-        Texture tex = invasorsHunt.res.getTexture("numbers");
-        TextureRegion[][] tmp = new TextureRegion(tex).split(
-                tex.getWidth() / cols,
-                tex.getHeight() / rows);
-        TextureRegion[] sprites = new TextureRegion[cols*rows];
-
-        int index = 0;
-        for (int i=0; i<rows; i++) {
-            for (int j=0; j<cols; j++) {
-                sprites[index++]=tmp[i][j];
-            }
-        }
-        enemiesIterator = new Animation(sprites);
-
-        int row = 11;
-        int column = 1;
-        tex = invasorsHunt.res.getTexture("life");
-        TextureRegion[][] tmp2 = new TextureRegion(tex).split(
-                tex.getWidth() / column,
-                tex.getHeight() / row);
-
-        lifeBar = new TextureRegion[row*column];
-        index = 0;
-        for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-                lifeBar[index++]=tmp2[i][j];
-            }
-        }
-
-        enemyIcon = new TextureRegion(invasorsHunt.res.getTexture("icon"));
-
-        b2dr = new Box2DDebugRenderer();
         //It's going to receive the number to make the enemy spawn more far from the main
         for(int i = 0; i < activeEnemies; i++){
             enemyBody.add(createEnemy((int) (cam.position.x / PPM) + 1));
         }
+
         //set up b2d cam
+        b2dr = new Box2DDebugRenderer();
         b2dCam = new OrthographicCamera();
         b2dCam.setToOrtho(false, invasorsHunt.V_WIDTH / PPM, invasorsHunt.V_HEIGHT / PPM);
     }
 
+    public void handleInput() {
+    }
+
     public void update(float dt) {
+
+        world.step(dt, 6, 2);
 
         timer += dt;
         // Spawn a new enemy each a few seconds
@@ -110,8 +80,7 @@ public class Play extends GameState {
             enemyBody.add(createEnemy((int) (cam.position.x / PPM) + 2));
             activeEnemies++;
 
-            timer -= 3.4f;
-
+            timer -= 1.7f;
         }
 
         //Set a hit to the player every enemy delay, each enemy has one
@@ -119,9 +88,9 @@ public class Play extends GameState {
             setPlayerHits(dt);
 
         // Punches if player delay is not set
-        if (!player.getDeathCondition() && !player.getStop() && player.handleInput()) {
+        if (!player.getDeathCondition() && !player.getStop() && player.handleInput())
             getBodiesToRemove(dt);
-        }
+
 
         // Update each player/enemy
     	player.update(dt);
@@ -129,14 +98,13 @@ public class Play extends GameState {
             enemyBody.get(i).update(dt, player.getBody());
 
 
-        // Seeks if an enemy or heart needs to be destroyed
+        // Seeks if an enemy or heart needs to be destroyed and destroys the box2d
         for(int i=0;i<enemyBody.size;i++)
             if(enemyBody.get(i).destroyEnemy() && !enemyBody.get(i).getDeathCondition()) {
                 enemyBody.get(i).setDeathCondition();
                 world.destroyBody(enemyBody.get(i).getBody());
             }
-
-
+        // Destroys the enemy data
         for(int i=0;i<enemyBody.size;i++){
             if(enemyBody.get(i).getPlayerHits() == -1){
                 if(getRand(0,101)%10==0)
@@ -146,8 +114,6 @@ public class Play extends GameState {
             }
         }
 
-
-        boolean victory = destroyedEnemies >= NUM_ENEMIES;
 
         //Perdeu o jogo
         if(player.getPlayerHits()>=PLAYER_LIVES && !player.getDeathCondition()) {
@@ -164,26 +130,26 @@ public class Play extends GameState {
             gsm.setState(GameStateManager.ENDWIN);
         }
 
-        world.step(dt, 6, 2);
-
         //removing hearts and giving one life each heart
-        Array<Body> heartsToRemove = player.getContactListener().getHeartsToRemove();
-        for(int i=0;i<heartsToRemove.size;i++){
-            Body h = heartsToRemove.get(i);
-            hearts.removeValue((Heart) h.getUserData(), true);
-            world.destroyBody(h);
-            player.getLife();
+        if (player.getContactListener().getHeathsOnContact() > 0) {
+            Array<Body> heartsToRemove = player.getContactListener().getHeartsToRemove();
+            for (int i = 0; i < player.getContactListener().getHeathsOnContact(); i++) {
+                hearts.removeValue((Heart) heartsToRemove.get(i).getUserData(), true);
+                world.destroyBody(heartsToRemove.get(i));
+                player.getLife();
+            }
+            player.getContactListener().setHeathsOnContact(0);
+            heartsToRemove.clear();
         }
-        heartsToRemove.clear();
-        //if(victory) gsm.setState(GameStateManager.END);
+
     }
 
     public void render() {
 
+        // updates the camera
         float newPos = player.getBody().getPosition().x * PPM;
         if(newPos > invasorsHunt.V_WIDTH / 5f && newPos < invasorsHunt.V_WIDTH + 10)
             cam.position.x = newPos;
-
         cam.update();
 
         //clear screen
@@ -199,22 +165,27 @@ public class Play extends GameState {
         int height2 = enemiesIterator.getFrame(0).getRegionHeight();
 
         sb.begin();
+        // draw background
         sb.draw(invasorsHunt.res.getTexture("background"), -100, 0,600, invasorsHunt.V_HEIGHT);
+        // draw life bar
         sb.draw(player.getPlayerHits() <= 10 ? lifeBar[player.getPlayerHits()] : lifeBar[10],
                 cam.position.x - invasorsHunt.V_WIDTH / 2f,
                 invasorsHunt.V_HEIGHT - height + 10,
                 width / 2f,
                 height / 2f);
+        // draw enemy icon
         sb.draw(enemyIcon,
                 cam.position.x - 1.75f * enemyIcon.getRegionWidth() + invasorsHunt.V_WIDTH / 2f,
                 invasorsHunt.V_HEIGHT - enemyIcon.getRegionHeight() / 2f - 5,
                 enemyIcon.getRegionWidth() / 2f,
                 enemyIcon.getRegionHeight() / 2f);
+        // draw enemy iterator ten
         sb.draw(enemiesIterator.getFrame(denm/10),
                 cam.position.x - 1.5f * width2 + invasorsHunt.V_WIDTH / 2f,
                 invasorsHunt.V_HEIGHT - height2 / 2f - 5,
                 width2 / 2f,
                 height2 / 2f);
+        // draw enemy iterato unity
         sb.draw(enemiesIterator.getFrame(denm%10),
                 cam.position.x - width2 + invasorsHunt.V_WIDTH / 2f,
                 invasorsHunt.V_HEIGHT - height2 / 2f - 5,
@@ -230,25 +201,25 @@ public class Play extends GameState {
         for(int i = 0; i < enemyBody.size; i++) {
             if(enemyBody.get(i).getFlash() > 0) {
                 if (enemyBody.get(i).getFlash() % 3 == 0)
-                    enemyBody.get(i).render(sb, cam);
+                    enemyBody.get(i).render(sb);
                 enemyBody.get(i).setFlash();
                 if (enemyBody.get(i).getFlash() > 6)
                     enemyBody.get(i).setFlash(0);
             }
             else
-                enemyBody.get(i).render(sb, cam);
+                enemyBody.get(i).render(sb);
         }
 
         //player render
         if(player.getFlash() > 0) {
             if (player.getFlash() % 3 == 0)
-                player.render(sb, cam);
+                player.render(sb);
             player.setFlash();
             if (player.getFlash() > 10)
                 player.setFlash(0);
         }
         else
-            player.render(sb, cam);
+            player.render(sb);
 
         sb.begin();
         sb.draw(invasorsHunt.res.getTexture("background2"), -100, 0,600, invasorsHunt.V_HEIGHT);
@@ -271,7 +242,7 @@ public class Play extends GameState {
 
     public void setPlayerHits (float dt) {
         int hits = 0;
-        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++) {
+        for (int j = 0; j < player.getContactListener().getContacts(); j++) {
             for(int i=0;i<enemyBody.size;i++){
                 if(enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody() && !enemyBody.get(i).getStop()) {
                     Enemy aux = enemyBody.get(i);
@@ -289,7 +260,7 @@ public class Play extends GameState {
 
     public void getBodiesToRemove(float dt){
         boolean punch = false;
-        for (int j = 0; j < player.getContactListener().currentEnemy.size; j++)
+        for (int j = 0; j < player.getContactListener().getContacts(); j++)
 	    for (int i = 0;i<enemyBody.size;i++){
 	        if(enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody()
                     && enemyBody.get(i).getPlayerHits() != -1
@@ -302,11 +273,68 @@ public class Play extends GameState {
                 enemyBody.get(i).getBody().applyForceToCenter(enemyBody.get(i).getSide() ? -250 : 250,0, true);
             }
 	    }
-	    if (punch) invasorsHunt.res.getSound("punch").play(0.1f);
-        else invasorsHunt.res.getSound("miss").play(0.1f);
+	    if (punch) invasorsHunt.res.getSound("punch").play(0.5f);
+        else invasorsHunt.res.getSound("miss").play(0.5f);
 	}
 
-    public void handleInput() {
+    public void createEnemyIterator(Texture icon, Texture numbers, int cols, int rows) {
+
+        // Initialize animation to enemy counter
+        TextureRegion[][] tmp = new TextureRegion(numbers).split(
+                numbers.getWidth() / cols,
+                numbers.getHeight() / rows);
+        TextureRegion[] sprites = new TextureRegion[cols*rows];
+        int index = 0;
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                sprites[index++]=tmp[i][j];
+            }
+        }
+        enemiesIterator = new Animation(sprites);
+        enemyIcon = new TextureRegion(icon);
+    }
+
+    public void createLifeBar (Texture icon, int cols, int rows) {
+
+        // Initialize sprites to life bar
+
+        TextureRegion[][] tmp2 = new TextureRegion(icon).split(
+                icon.getWidth() / cols,
+                icon.getHeight() / rows);
+
+        lifeBar = new TextureRegion[rows*cols];
+
+        int index = 0;
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                lifeBar[index++]=tmp2[i][j];
+            }
+        }
+    }
+
+    private void createHearts(Vector2 heartsPos){
+
+        BodyDef bdef = new BodyDef();
+        FixtureDef fdef = new FixtureDef();
+
+        bdef.position.set(heartsPos);
+
+        CircleShape cshape = new CircleShape();
+        cshape.setRadius(2f / PPM);
+
+        fdef.shape = cshape;
+        fdef.isSensor = true;
+        fdef.filter.categoryBits = B2DVars.BIT_HEART;
+        fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+
+        Body body = world.createBody(bdef);
+        body.createFixture(fdef).setUserData("Hearts");
+
+        Heart h = new Heart(body);
+        hearts.add(h);
+
+        body.setUserData(h);
+
     }
 
     public void createBorder(){
@@ -372,11 +400,6 @@ public class Play extends GameState {
         shape.setAsBox(10 / PPM,10 / PPM);
         fdef.shape = shape;
         fdef.friction = 1000000000000f;
-        //MassData mass = new MassData();
-        //mass.I = body.getAngle();
-        //mass.I = 5f;
-        //body.setMassData(mass);
-        //to change the category
         body.createFixture(fdef).setUserData("Player");
 
         player = new Player(body);
@@ -386,7 +409,6 @@ public class Play extends GameState {
         CircleShape cshape = new CircleShape();
         FixtureDef fdef = new FixtureDef();
 
-        //bdef.position.set(180 / PPM,(130) / PPM);
         int i = getRand(1,3)*2-3;
         bdef.position.set( i > 0 ? ((100+getRand(50,150))*dist*i) / PPM : ((getRand(0,100))*dist*i) / PPM,
                 (getRand(0,80)) / PPM);
@@ -410,31 +432,6 @@ public class Play extends GameState {
         body.createFixture(fdef).setUserData("Foot_Enemy");
 
         return new Enemy(body);
-    }
-
-    private void createHearts(Vector2 heartsPos){
-
-        BodyDef bdef = new BodyDef();
-        FixtureDef fdef = new FixtureDef();
-
-        bdef.position.set(heartsPos);
-
-        CircleShape cshape = new CircleShape();
-        cshape.setRadius(2f / PPM);
-
-        fdef.shape = cshape;
-        fdef.isSensor = true;
-        fdef.filter.categoryBits = B2DVars.BIT_HEART;
-        fdef.filter.maskBits = B2DVars.BIT_PLAYER;
-
-        Body body = world.createBody(bdef);
-        body.createFixture(fdef).setUserData("Hearts");
-
-        Heart h = new Heart(body);
-        hearts.add(h);
-
-        body.setUserData(h);
-
     }
 
     public void dispose() {

@@ -1,6 +1,5 @@
 package com.gddomenico.ih.entities;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -20,7 +19,6 @@ public class B2DSprite {
     protected TextureRegion[] death;
 
     protected int flash = 0;
-
     protected Integer playerHits = 0;
 
     protected boolean rightArm = false;
@@ -79,21 +77,7 @@ public class B2DSprite {
                 flip ? width : -width,
                 height);
         sb.end();
-    }
-    public void render(SpriteBatch sb, OrthographicCamera cam) {
 
-        // flip sprite
-        boolean flip = rightArm;
-        //spriteBatch.draw(currentFrame, flip ? x+width : x, y, flip ? -width : width, height);
-        //sb.draw(animation.getFrame(), (body.getPosition().x * PPM - width / 2), (int) (body.getPosition().y * PPM - height / 2));
-
-        sb.begin();
-        sb.draw(animation.getFrame(),
-                flip ? (body.getPosition().x * PPM - width / 2 ) : (body.getPosition().x * PPM + width / 2),
-                (int) (body.getPosition().y * PPM - height / 2),
-                flip ? width : -width,
-                height);
-        sb.end();
     }
 
     public void setFlash (int flash) {
@@ -106,6 +90,7 @@ public class B2DSprite {
 
     public Body getBody() { return body; }
     public Vector2 getPosition() { return body.getPosition(); }
+
     public float getWidth() { return width; }
     public float getHeight() { return height; }
 
@@ -134,9 +119,9 @@ public class B2DSprite {
     }
 
     public void setDeathCondition() {
+        animation.setWalk(true);
         isDead = true;
         stop = true;
-        animation.setWalk(true);
         timeStop = 0;
         setAnimation(death);
     }
