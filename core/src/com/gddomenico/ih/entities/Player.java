@@ -11,7 +11,13 @@ public class Player extends B2DSprite{
 
     private final MyContactListener cl;
 
+    private boolean isWinner = false;
+
+    private TextureRegion[] win;
+
     private boolean defeat = false;
+
+    private boolean victory = false;
 
 	public Player(Body body) {
 		super(body);
@@ -21,6 +27,7 @@ public class Player extends B2DSprite{
 		punch = animateCharacter(invasorsHunt.res.getTexture("main_punch"), 8, 1);
         walk = animateCharacter(invasorsHunt.res.getTexture("main"), 3, 1);
         death = animateCharacter(invasorsHunt.res.getTexture("main_death"), 11, 1);
+        win = animateCharacter(invasorsHunt.res.getTexture("main_win"), 16, 1);
 
         setAnimation(walk);
 
@@ -96,6 +103,12 @@ public class Player extends B2DSprite{
             if(animation.getFrame() == death[0])
                 defeat = true;
         }
+
+        if(isWinner && !stop) {
+            body.setLinearVelocity(0, 0);
+            if(animation.getFrame() == win[0])
+                victory = true;
+        }
     }
 
     public void setPlayerHits(int num){
@@ -103,7 +116,18 @@ public class Player extends B2DSprite{
     }
 
     public boolean getDefeat () { return defeat; }
+    public boolean getVictory() { return victory;}
     public void getLife() { if(playerHits != 0) playerHits--; }
+
+    public void setWinCondition(){
+        isWinner = true;
+        stop = true;
+        animation.setWalk(true);
+        timeStop = 0;
+        setAnimation(win);
+    }
+
+    public boolean getWinCondition(){ return isWinner;}
 
 	public MyContactListener getContactListener () {
 		return cl;

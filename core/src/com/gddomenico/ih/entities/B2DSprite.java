@@ -30,7 +30,7 @@ public class B2DSprite {
     protected float width;
     protected float height;
 
-    private float timeStop = 0f;
+    protected float timeStop = 0f;
     public static final float delay = 1/3f;
 
     protected boolean stop = false;

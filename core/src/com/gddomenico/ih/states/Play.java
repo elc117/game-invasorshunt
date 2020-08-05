@@ -32,7 +32,7 @@ public class Play extends GameState {
 
     private final OrthographicCamera b2dCam;
     
-    private static final int NUM_ENEMIES = 50;
+    private static final int NUM_ENEMIES = 5;
     private int activeEnemies = 5;
     private int destroyedEnemies = 0;
 
@@ -154,7 +154,14 @@ public class Play extends GameState {
             player.setDeathCondition();
         }
         if(player.getDeathCondition() && player.getDefeat()) {
-            gsm.setState(GameStateManager.END);
+            gsm.setState(GameStateManager.ENDLOSE);
+        }
+        //Ganhou o jogo
+        if((NUM_ENEMIES - destroyedEnemies) == 0 && !player.getWinCondition()) {
+            player.setWinCondition();
+        }
+        if(player.getWinCondition() && player.getVictory()) {
+            gsm.setState(GameStateManager.ENDWIN);
         }
 
         world.step(dt, 6, 2);
