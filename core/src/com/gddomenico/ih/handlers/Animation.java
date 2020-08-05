@@ -55,9 +55,6 @@ public class Animation {
     private void step() {
         time -= delay;
         currentFrame++;
-        //System.out.println("current: " + currentFrame);
-        //System.out.println("lenght: "+ frames.length);
-        //System.out.println("walk: "+ walk);
 
         if(!walk || currentFrame >= frames.length) {
             currentFrame = 0;

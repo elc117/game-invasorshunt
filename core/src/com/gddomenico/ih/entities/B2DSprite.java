@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.gddomenico.ih.handlers.Animation;
-import com.sun.corba.se.impl.ior.ObjectAdapterIdNumber;
 
 import static com.gddomenico.ih.handlers.B2DVars.PPM;
 
@@ -67,8 +66,6 @@ public class B2DSprite {
 
         // flip sprite
         boolean flip = rightArm;
-        //spriteBatch.draw(currentFrame, flip ? x+width : x, y, flip ? -width : width, height);
-        //sb.draw(animation.getFrame(), (body.getPosition().x * PPM - width / 2), (int) (body.getPosition().y * PPM - height / 2));
 
         sb.begin();
         sb.draw(animation.getFrame(),
