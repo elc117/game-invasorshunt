@@ -82,6 +82,7 @@ public class Enemy extends B2DSprite {
     public void countTimer (float dt) { timer += dt; }
     public boolean canPunch () {
         if (timer >= attackDelay) {
+            invasorsHunt.res.getSound("enemyPunch").play(0.5f);
             setAnimation(punch);
             hasPunched();
             stop = true;

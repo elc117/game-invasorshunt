@@ -21,7 +21,7 @@ import static com.gddomenico.ih.handlers.B2DVars.*;
 
 public class Play extends GameState {
 
-    private static final boolean debug = true;
+    private static final boolean debug = false;
 
     private final World world;
     private final Box2DDebugRenderer b2dr;
@@ -29,7 +29,7 @@ public class Play extends GameState {
     private final OrthographicCamera b2dCam;
 
     // Max enemies and enemies iterator
-    private static final int NUM_ENEMIES = 50;
+    private static final int NUM_ENEMIES = 30;
     private int activeEnemies = 5;
     private int destroyedEnemies = 0;
     private float timer = 0;
@@ -45,7 +45,7 @@ public class Play extends GameState {
     public Play(GameStateManager gsm) {
         super(gsm);
 
-        //invasorsHunt.res.getMusic("play").play();
+        invasorsHunt.res.getMusic("play").play();
 
         world = new World(new Vector2(0, 0), true);
 
@@ -107,7 +107,7 @@ public class Play extends GameState {
         // Destroys the enemy data
         for(int i=0;i<enemyBody.size;i++){
             if(enemyBody.get(i).getPlayerHits() == -1){
-                if(getRand(0,101)%10==0)
+                if(getRand(0,13)%4==0)
                     createHearts(enemyBody.get(i).getPosition());
                 enemyBody.removeIndex(i);
                 destroyedEnemies++;

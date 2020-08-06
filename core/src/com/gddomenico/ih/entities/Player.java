@@ -136,6 +136,7 @@ public class Player extends B2DSprite{
         invasorsHunt.res.getSound("lose").play(0.5f);
     }
 
+
 	public MyContactListener getContactListener () {
 		return cl;
 	}

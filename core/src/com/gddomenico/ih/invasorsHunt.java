@@ -40,6 +40,7 @@ public class invasorsHunt extends ApplicationAdapter {
 		res.loadSound("sounds/missed.wav", "miss");
 		res.loadSound("sounds/lose.wav", "lose");
 		res.loadSound("sounds/win.wav", "win");
+		res.loadSound("sounds/enemyPunch.wav", "enemyPunch");
 
 		// Music
 		res.loadMusic("sounds/menu.wav","menu");
@@ -55,11 +56,8 @@ public class invasorsHunt extends ApplicationAdapter {
 		res.loadTexture("images/enemies_punch.png","enemies_punch");
 		res.loadTexture("images/enemies_death.png","enemies_death");
 
-<<<<<<< Updated upstream
-=======
 		// Player textures
 		res.loadTexture("images/mainIcon.png","mainIcon");
->>>>>>> Stashed changes
 		res.loadTexture("images/main.png","main");
 		res.loadTexture("images/main_win.png","main_win");
 		res.loadTexture("images/main_punch.png","main_punch");
