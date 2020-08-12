@@ -14,7 +14,7 @@ public class Menu extends GameState {
     private final BitmapFont titleFont;
     private final BitmapFont font;
 
-    private final static String title = "Ivasors Hunt";
+    private final static String title = "Invasors Hunt";
 
     private boolean help = false;
     

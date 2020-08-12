@@ -20,10 +20,10 @@ com/gddomenico/ih/handlers/Animation.java
  com.gddomenico.ih.handlers.Animation
 com/gddomenico/ih/handlers/Content.java
  com.gddomenico.ih.handlers.Content
-com/gddomenico/ih/invasorsHunt.java
- com.gddomenico.ih.invasorsHunt
 com/gddomenico/ih/handlers/MyInputProcessor.java
  com.gddomenico.ih.handlers.MyInputProcessor
+com/gddomenico/ih/invasorsHunt.java
+ com.gddomenico.ih.invasorsHunt
 com/gddomenico/ih/states/EndLose.java
  com.gddomenico.ih.states.EndLose
 com/gddomenico/ih/states/Play.java

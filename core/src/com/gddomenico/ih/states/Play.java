@@ -1,13 +1,17 @@
 package com.gddomenico.ih.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.PauseableThread;
 import com.gddomenico.ih.entities.Heart;
 import com.gddomenico.ih.handlers.*;
 import com.gddomenico.ih.invasorsHunt;
@@ -34,6 +38,8 @@ public class Play extends GameState {
     private int destroyedEnemies = 0;
     private float timer = 0;
 
+    private boolean pause = false;
+
     private TextureRegion[] lifeBar;
     private Animation enemiesIterator;
     private TextureRegion enemyIcon;
@@ -41,6 +47,7 @@ public class Play extends GameState {
     private Player player;
     private final Array<Enemy> enemyBody = new Array<>();
     private final Array<Heart> hearts = new Array<>();
+    private final Array<Enemy> bodyToRemove = new Array<>();
 
     public Play(GameStateManager gsm) {
         super(gsm);
@@ -68,9 +75,19 @@ public class Play extends GameState {
     }
 
     public void handleInput() {
+        // Movement Inputs
+        if(MyInput.isPressed(MyInput.BUTTON_ESC)) {
+            pause = !pause;
+            if(pause) invasorsHunt.res.getMusic("play").pause();
+            else invasorsHunt.res.getMusic("play").play();
+        }
     }
 
     public void update(float dt) {
+
+        handleInput();
+
+        if(pause) return;
 
         world.step(dt, 6, 2);
 
@@ -96,20 +113,20 @@ public class Play extends GameState {
     	player.update(dt);
         for(int i = 0; i < enemyBody.size; i++)
             enemyBody.get(i).update(dt, player.getBody());
-
-
+        
         // Seeks if an enemy or heart needs to be destroyed and destroys the box2d
-        for(int i=0;i<enemyBody.size;i++)
-            if(enemyBody.get(i).destroyEnemy() && !enemyBody.get(i).getDeathCondition()) {
-                enemyBody.get(i).setDeathCondition();
-                world.destroyBody(enemyBody.get(i).getBody());
+        for(int i=0;i<bodyToRemove.size;i++)
+            if(bodyToRemove.get(i).destroyEnemy() && !bodyToRemove.get(i).getDeathCondition()) {
+                bodyToRemove.get(i).setDeathCondition();
+                world.destroyBody(bodyToRemove.get(i).getBody());
             }
         // Destroys the enemy data
-        for(int i=0;i<enemyBody.size;i++){
-            if(enemyBody.get(i).getPlayerHits() == -1){
+        for(int i=0;i<bodyToRemove.size;i++){
+            if(bodyToRemove.get(i).getPlayerHits() == -1){
                 if(getRand(0,13)%4==0)
-                    createHearts(enemyBody.get(i).getPosition());
-                enemyBody.removeIndex(i);
+                    createHearts(bodyToRemove.get(i).getPosition());
+                enemyBody.removeValue(bodyToRemove.get(i), true);
+                bodyToRemove.removeIndex(i);
                 destroyedEnemies++;
             }
         }
@@ -223,6 +240,23 @@ public class Play extends GameState {
 
         sb.begin();
         sb.draw(invasorsHunt.res.getTexture("background2"), -100, 0,600, invasorsHunt.V_HEIGHT);
+        if(pause) {
+            String title = "Pause";
+
+            BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
+
+            GlyphLayout layout = new GlyphLayout();
+            layout.setText(font, title);
+            font.setColor(Color.YELLOW);
+            float layoutWidth = layout.width;
+
+            font.draw(
+                    sb,
+                    title,
+                    cam.position.x - layoutWidth / 2f,
+                    invasorsHunt.V_HEIGHT / 2f
+            );
+        }
         sb.end();
 
         if(debug)
@@ -263,7 +297,7 @@ public class Play extends GameState {
         for (int j = 0; j < player.getContactListener().getContacts(); j++)
 	    for (int i = 0;i<enemyBody.size;i++){
 	        if(enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody()
-                    && enemyBody.get(i).getPlayerHits() != -1
+                    && ( enemyBody.get(i).getPlayerHits() != -1 && enemyBody.get(i).getPlayerHits() < 5)
                     && enemyBody.get(i).getSide() == !player.getRightArm())
 	        {
                 punch = true;
@@ -272,13 +306,16 @@ public class Play extends GameState {
                 enemyBody.get(i).setEnemyHits();
                 enemyBody.get(i).getBody().applyForceToCenter(enemyBody.get(i).getSide() ? -250 : 250,0, true);
             }
+	        else if (enemyBody.get(i).getBody() == player.getContactListener().currentEnemy.get(j).getBody()
+                    && enemyBody.get(i).getPlayerHits() != -1 && enemyBody.get(i).getPlayerHits() >= 5) {
+	            bodyToRemove.add(enemyBody.get(i));
+            }
 	    }
 	    if (punch) invasorsHunt.res.getSound("punch").play(0.5f);
         else invasorsHunt.res.getSound("miss").play(0.5f);
 	}
 
     public void createEnemyIterator(Texture icon, Texture numbers, int cols, int rows) {
-
         // Initialize animation to enemy counter
         TextureRegion[][] tmp = new TextureRegion(numbers).split(
                 numbers.getWidth() / cols,

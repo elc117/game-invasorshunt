@@ -80,7 +80,7 @@ public class MyInputProcessor extends InputAdapter {
             MyInput.setKey(MyInput.BUTTON_LEFT, false);
         }
         if(k == Input.Keys.ESCAPE){
-            MyInput.setKey(MyInput.BUTTON_ESC, true);
+            MyInput.setKey(MyInput.BUTTON_ESC, false);
         }
         return true;
     }
