@@ -12,8 +12,8 @@ import com.gddomenico.ih.handlers.MyInputProcessor;
 public class invasorsHunt extends ApplicationAdapter {
 
 	public static final  String TITLE = "Invasors Hunt";
-	public static final int V_WIDTH = 320;
-	public static final int V_HEIGHT = 240;
+	public static final int V_WIDTH = 620;
+	public static final int V_HEIGHT = 440;
 	public static final int SCALE = 2;
 
 	public static final float STEP = 1 / 60f;

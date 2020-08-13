@@ -36,8 +36,8 @@ public class EndWin extends GameState {
 
         sb.begin();
         sb.draw(winImage,
-                cam.position.x - invasorsHunt.V_WIDTH / 2.1f,
-                invasorsHunt.V_HEIGHT - winImage.getRegionHeight() / 2.1f,
+                cam.position.x - invasorsHunt.V_WIDTH / 3.8f,
+                invasorsHunt.V_HEIGHT - winImage.getRegionHeight() / 1.5f,
                 winImage.getRegionWidth() / 2.5f,
                 winImage.getRegionHeight() / 2.5f
         );

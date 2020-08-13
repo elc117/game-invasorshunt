@@ -18,10 +18,7 @@ public class EndLose extends GameState {
 
     public void handleInput() {
         if(MyInput.isPressed(MyInput.BUTTON_K)){
-            gsm.setState(GameStateManager.PLAY);
-        }
-        if(MyInput.isPressed(MyInput.BUTTON_ESC)){
-            Gdx.app.exit();
+            gsm.setState(GameStateManager.MENU);
         }
     }
 
@@ -36,8 +33,8 @@ public class EndLose extends GameState {
 
         sb.begin();
         sb.draw(loseImage,
-                cam.position.x - invasorsHunt.V_WIDTH / 2.1f,
-                invasorsHunt.V_HEIGHT - loseImage.getRegionHeight() / 2.1f,
+                cam.position.x - invasorsHunt.V_WIDTH / 3.8f,
+                invasorsHunt.V_HEIGHT - loseImage.getRegionHeight() / 1.5f,
                 loseImage.getRegionWidth() / 2.5f,
                 loseImage.getRegionHeight() / 2.5f
         );

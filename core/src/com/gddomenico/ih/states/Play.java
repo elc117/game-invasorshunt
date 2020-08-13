@@ -183,7 +183,7 @@ public class Play extends GameState {
 
         sb.begin();
         // draw background
-        sb.draw(invasorsHunt.res.getTexture("background"), -100, 0,600, invasorsHunt.V_HEIGHT);
+        sb.draw(invasorsHunt.res.getTexture("background"), -420, 0,1200, invasorsHunt.V_HEIGHT);
         // draw life bar
         sb.draw(player.getPlayerHits() <= 10 ? lifeBar[player.getPlayerHits()] : lifeBar[10],
                 cam.position.x - invasorsHunt.V_WIDTH / 2f,

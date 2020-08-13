@@ -24,20 +24,22 @@ public class Menu extends GameState {
     private final TextureRegion enemyIcon = new TextureRegion(invasorsHunt.res.getTexture("enemyIcon"));
 	private final TextureRegion mainIcon = new TextureRegion(invasorsHunt.res.getTexture("mainIcon"));
 
+	public static final int V_WIDTH = 620;
+	public static final int V_HEIGHT = 440;
+
 	public Menu(GameStateManager gsm) {
         super(gsm);
 
         titleFont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
 
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
-        font.getData().setScale(invasorsHunt.SCALE/4f);
+        font.getData().setScale(invasorsHunt.SCALE/2.5f);
 
 		invasorsHunt.res.getMusic("menu").play();
 
         menuItems = new String[] {
         	"Jogar",
-        	"Ajuda",
-        	"Sair"
+        	"Ajuda"
         };
         
     }
@@ -49,7 +51,7 @@ public class Menu extends GameState {
     	else if(currentItem == 1) {
     		help = true;
     		currentItem = 3;
-			font.getData().setScale(invasorsHunt.SCALE/5f);
+			font.getData().setScale(invasorsHunt.SCALE/2.5f);
     	}
 		else if(currentItem == 2) {
     		Gdx.app.exit();
@@ -57,7 +59,7 @@ public class Menu extends GameState {
 		else if (currentItem == 3) {
 			help = false;
 			currentItem = 0;
-			font.getData().setScale(invasorsHunt.SCALE/4f);
+			font.getData().setScale(invasorsHunt.SCALE/2.5f);
 		}
     }
 
@@ -86,14 +88,14 @@ public class Menu extends GameState {
     
 
     public void render() {
-    	
+		cam.setToOrtho(false, V_WIDTH, V_HEIGHT);
     	GlyphLayout layout = new GlyphLayout();
     	layout.setText(titleFont, title);
 		titleFont.setColor(Color.YELLOW);
     	float width = layout.width;
     	
     	this.sb.setProjectionMatrix(this.cam.combined);
-    	
+
     	sb.begin();
     	
 		sb.draw(invasorsHunt.res.getTexture("menu"), 0, 0,invasorsHunt.V_WIDTH, invasorsHunt.V_HEIGHT);
@@ -115,7 +117,7 @@ public class Menu extends GameState {
 						sb,
 						menuItems[i],
 						(invasorsHunt.V_WIDTH - width) / 2,
-						150 - 35 * i
+						250 - 35 * i
 				);
 			}
 		}
@@ -139,6 +141,7 @@ public class Menu extends GameState {
 					"S   ->    Baixo",
 					"D   ->    Direita",
 					"K   ->    Ataca",
+					"ESC   ->    Pausa",
 			};
 			for (int i = 0; i < texto.length; i++) {
 				font.draw(
