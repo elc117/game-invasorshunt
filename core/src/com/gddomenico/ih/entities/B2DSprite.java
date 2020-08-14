@@ -74,8 +74,8 @@ public class B2DSprite {
         sb.draw(animation.getFrame(),
                 flip ? (body.getPosition().x * PPM - width / 2) : (body.getPosition().x * PPM + width / 2),
                 (int) (body.getPosition().y * PPM - height / 2),
-                flip ? width : -width,
-                height);
+                flip ? width + 20 : -width - 20,
+                height + 20);
         sb.end();
 
     }

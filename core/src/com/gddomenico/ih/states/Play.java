@@ -183,31 +183,31 @@ public class Play extends GameState {
 
         sb.begin();
         // draw background
-        sb.draw(invasorsHunt.res.getTexture("background"), -420, 0,1200, invasorsHunt.V_HEIGHT);
+        sb.draw(invasorsHunt.res.getTexture("background"), -220, 0,1200, invasorsHunt.V_HEIGHT);
         // draw life bar
         sb.draw(player.getPlayerHits() <= 10 ? lifeBar[player.getPlayerHits()] : lifeBar[10],
-                cam.position.x - invasorsHunt.V_WIDTH / 2f,
-                invasorsHunt.V_HEIGHT - height + 10,
-                width / 2f,
-                height / 2f);
+                cam.position.x - invasorsHunt.V_WIDTH / 2f + 5,
+                invasorsHunt.V_HEIGHT - height - 2,
+                width / 2f + 60,
+                height / 2f + 10);
         // draw enemy icon
         sb.draw(enemyIcon,
-                cam.position.x - 1.75f * enemyIcon.getRegionWidth() + invasorsHunt.V_WIDTH / 2f,
-                invasorsHunt.V_HEIGHT - enemyIcon.getRegionHeight() / 2f - 5,
-                enemyIcon.getRegionWidth() / 2f,
-                enemyIcon.getRegionHeight() / 2f);
+                cam.position.x - 1.75f * enemyIcon.getRegionWidth() + invasorsHunt.V_WIDTH / 2f - 15,
+                invasorsHunt.V_HEIGHT - enemyIcon.getRegionHeight() / 2f - 20,
+                enemyIcon.getRegionWidth(),
+                enemyIcon.getRegionHeight());
         // draw enemy iterator ten
         sb.draw(enemiesIterator.getFrame(denm/10),
                 cam.position.x - 1.5f * width2 + invasorsHunt.V_WIDTH / 2f,
-                invasorsHunt.V_HEIGHT - height2 / 2f - 5,
-                width2 / 2f,
-                height2 / 2f);
+                invasorsHunt.V_HEIGHT - height2 / 2f - 15,
+                width2 / 2f + 10,
+                height2 / 2f + 10);
         // draw enemy iterato unity
         sb.draw(enemiesIterator.getFrame(denm%10),
                 cam.position.x - width2 + invasorsHunt.V_WIDTH / 2f,
-                invasorsHunt.V_HEIGHT - height2 / 2f - 5,
-                width2 / 2f,
-                height2 / 2f);
+                invasorsHunt.V_HEIGHT - height2 / 2f - 15,
+                width2 / 2f + 10,
+                height2 / 2f + 10);
         sb.end();
         //draw a heart
         if(hearts.notEmpty())

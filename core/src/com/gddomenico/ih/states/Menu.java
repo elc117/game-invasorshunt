@@ -134,13 +134,20 @@ public class Menu extends GameState {
 			);
 			String texto[] = new String[] {
 					"Voce e um globulo branco dentro de um corpo humano e seu objetivo",
+					" ",
 					"e protege-lo dos parasitas. Acabe com todos para ganhar o jogo",
-					"",
-					"W   ->    Cima",
-					"A   ->    Esquerda",
-					"S   ->    Baixo",
-					"D   ->    Direita",
-					"K   ->    Ataca",
+					" ",
+					" ",
+					"W        ->    Cima",
+					" ",
+					"A        ->    Esquerda",
+					" ",
+					"S        ->    Baixo",
+					" ",
+					"D        ->    Direita",
+					" ",
+					"K        ->    Ataca",
+					" ",
 					"ESC   ->    Pausa",
 			};
 			for (int i = 0; i < texto.length; i++) {
@@ -148,26 +155,26 @@ public class Menu extends GameState {
 						sb,
 						texto[i],
 						20,
-						invasorsHunt.V_HEIGHT - 50 - 15 * i
+						invasorsHunt.V_HEIGHT - 70 - 15 * i
 				);
 			}
 			instrucoes = "Voce";
 			font.draw(
 					sb,
 					instrucoes,
-					invasorsHunt.V_WIDTH / 2f - 5,
-					130
+					invasorsHunt.V_WIDTH / 2f + 30,
+					290
 			);
 			instrucoes = "Inimigo";
 			font.draw(
 					sb,
 					instrucoes,
-					invasorsHunt.V_WIDTH / 2f + 75,
-					130
+					invasorsHunt.V_WIDTH / 2f + 125,
+					290
 			);
 
-			sb.draw(mainIcon, invasorsHunt.V_WIDTH / 2f - 20, 70);
-			sb.draw(enemyIcon, invasorsHunt.V_WIDTH / 2f + 70, 70);
+			sb.draw(mainIcon, invasorsHunt.V_WIDTH / 2f + 24, 220);
+			sb.draw(enemyIcon, invasorsHunt.V_WIDTH / 2f + 134, 220);
 
 			layout.setText(font, "Voltar");
 			font.setColor(Color.RED);
