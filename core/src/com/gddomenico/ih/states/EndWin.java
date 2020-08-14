@@ -18,10 +18,7 @@ public class EndWin extends GameState {
 
     public void handleInput() {
         if(MyInput.isPressed(MyInput.BUTTON_K)){
-            gsm.setState(GameStateManager.PLAY);
-        }
-        if(MyInput.isPressed(MyInput.BUTTON_ESC)){
-            Gdx.app.exit();
+            gsm.setState(GameStateManager.MENU);
         }
     }
 

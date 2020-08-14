@@ -45,7 +45,7 @@ public class Enemy extends B2DSprite {
         float cos = (px / sqrt) * 0.5f;
         float sin = (py / sqrt) * 0.5f;
 
-        if(sqrt < 0.2 || stop)
+        if(sqrt < 0.25 || stop)
             body.setLinearVelocity(0, 0);
         else
             body.setLinearVelocity(cos, sin);

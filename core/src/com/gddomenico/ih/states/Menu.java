@@ -105,7 +105,7 @@ public class Menu extends GameState {
 					sb,
 					title,
 					(invasorsHunt.V_WIDTH - width) / 2,
-					(invasorsHunt.V_HEIGHT - 30)
+					(invasorsHunt.V_HEIGHT - invasorsHunt.SCALE * 30)
 			);
 			for (int i = 0; i < menuItems.length; i++) {
 				layout.setText(font, menuItems[i]);
@@ -117,7 +117,7 @@ public class Menu extends GameState {
 						sb,
 						menuItems[i],
 						(invasorsHunt.V_WIDTH - width) / 2,
-						250 - 35 * i
+						250 - 40 * i
 				);
 			}
 		}

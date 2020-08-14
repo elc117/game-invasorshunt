@@ -165,7 +165,7 @@ public class Play extends GameState {
 
         // updates the camera
         float newPos = player.getBody().getPosition().x * PPM;
-        if(newPos > invasorsHunt.V_WIDTH / 5f && newPos < invasorsHunt.V_WIDTH + 10)
+        if(newPos > invasorsHunt.V_WIDTH / 5f && newPos < invasorsHunt.V_WIDTH + 50)
             cam.position.x = newPos;
         cam.update();
 
@@ -384,14 +384,14 @@ public class Play extends GameState {
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderUpBody = world.createBody(bdef);
 
-        shape.setAsBox((invasorsHunt.V_WIDTH*1.75f) / PPM,80 / PPM);
+        shape.setAsBox((invasorsHunt.V_WIDTH*1.75f) / PPM,80 * invasorsHunt.SCALE / PPM);
         fdef.shape = shape;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;
         //to change the category
         borderUpBody.createFixture(fdef).setUserData("Border_Up");
 
         //Border Left
-        bdef.position.set(-100 / PPM, invasorsHunt.V_HEIGHT / PPM);
+        bdef.position.set(-175 / PPM, invasorsHunt.V_HEIGHT / PPM);
         bdef.type =  BodyDef.BodyType.StaticBody;
         Body borderLeftBody = world.createBody(bdef);
 
@@ -434,7 +434,7 @@ public class Play extends GameState {
         bdef.type =  BodyDef.BodyType.DynamicBody;
         Body body = world.createBody(bdef);
 
-        shape.setAsBox(10 / PPM,10 / PPM);
+        shape.setAsBox(invasorsHunt.SCALE * 7.5f / PPM,invasorsHunt.SCALE * 7.5f / PPM);
         fdef.shape = shape;
         fdef.friction = 1000000000000f;
         body.createFixture(fdef).setUserData("Player");
@@ -453,7 +453,7 @@ public class Play extends GameState {
         Body body = world.createBody(bdef);
         body.setGravityScale(0f);
 
-        cshape.setRadius(10f / PPM);
+        cshape.setRadius(invasorsHunt.SCALE * 7.5f / PPM);
         fdef.shape = cshape;
         //to change the category
         fdef.filter.categoryBits = B2DVars.BIT_ENEMY;
@@ -462,7 +462,7 @@ public class Play extends GameState {
         body.createFixture(fdef).setUserData("Enemy");
 
         // create a foot sensor
-        cshape.setRadius(10f / PPM);
+        cshape.setRadius(invasorsHunt.SCALE * 7.5f / PPM);
         fdef.shape = cshape;
         fdef.filter.categoryBits = B2DVars.BIT_ENEMY;
         fdef.filter.maskBits = B2DVars.BIT_PLAYER;

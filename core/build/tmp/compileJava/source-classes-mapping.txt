@@ -2,14 +2,18 @@ com/gddomenico/ih/entities/Player.java
  com.gddomenico.ih.entities.Player
 com/gddomenico/ih/entities/B2DSprite.java
  com.gddomenico.ih.entities.B2DSprite
+com/gddomenico/ih/states/Help.java
+ com.gddomenico.ih.states.Help
 com/gddomenico/ih/entities/Heart.java
  com.gddomenico.ih.entities.Heart
-com/gddomenico/ih/handlers/MyInput.java
- com.gddomenico.ih.handlers.MyInput
+com/gddomenico/ih/handlers/Tuple.java
+ com.gddomenico.ih.handlers.Tuple
 com/gddomenico/ih/states/GameState.java
  com.gddomenico.ih.states.GameState
 com/gddomenico/ih/handlers/MyContactListener.java
  com.gddomenico.ih.handlers.MyContactListener
+com/gddomenico/ih/states/End.java
+ com.gddomenico.ih.states.End
 com/gddomenico/ih/states/EndWin.java
  com.gddomenico.ih.states.EndWin
 com/gddomenico/ih/states/Menu.java
@@ -20,12 +24,14 @@ com/gddomenico/ih/handlers/Animation.java
  com.gddomenico.ih.handlers.Animation
 com/gddomenico/ih/handlers/Content.java
  com.gddomenico.ih.handlers.Content
-com/gddomenico/ih/handlers/MyInputProcessor.java
- com.gddomenico.ih.handlers.MyInputProcessor
 com/gddomenico/ih/invasorsHunt.java
  com.gddomenico.ih.invasorsHunt
+com/gddomenico/ih/handlers/MyInputProcessor.java
+ com.gddomenico.ih.handlers.MyInputProcessor
 com/gddomenico/ih/states/EndLose.java
  com.gddomenico.ih.states.EndLose
+com/gddomenico/ih/handlers/MyInput.java
+ com.gddomenico.ih.handlers.MyInput
 com/gddomenico/ih/states/Play.java
  com.gddomenico.ih.states.Play
 com/gddomenico/ih/entities/Enemy.java
