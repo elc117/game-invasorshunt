@@ -4,10 +4,10 @@ com/gddomenico/ih/entities/B2DSprite.java
  com.gddomenico.ih.entities.B2DSprite
 com/gddomenico/ih/states/Help.java
  com.gddomenico.ih.states.Help
-com/gddomenico/ih/states/Play.java
- com.gddomenico.ih.states.Play
-com/gddomenico/ih/handlers/GameStateManager.java
- com.gddomenico.ih.handlers.GameStateManager
+com/gddomenico/ih/entities/Heart.java
+ com.gddomenico.ih.entities.Heart
+com/gddomenico/ih/handlers/Tuple.java
+ com.gddomenico.ih.handlers.Tuple
 com/gddomenico/ih/states/GameState.java
  com.gddomenico.ih.states.GameState
 com/gddomenico/ih/handlers/MyContactListener.java
@@ -32,9 +32,9 @@ com/gddomenico/ih/states/EndLose.java
  com.gddomenico.ih.states.EndLose
 com/gddomenico/ih/handlers/MyInput.java
  com.gddomenico.ih.handlers.MyInput
+com/gddomenico/ih/states/Play.java
+ com.gddomenico.ih.states.Play
 com/gddomenico/ih/entities/Enemy.java
  com.gddomenico.ih.entities.Enemy
-com/gddomenico/ih/handlers/Tuple.java
- com.gddomenico.ih.handlers.Tuple
-com/gddomenico/ih/entities/Heart.java
- com.gddomenico.ih.entities.Heart
+com/gddomenico/ih/handlers/GameStateManager.java
+ com.gddomenico.ih.handlers.GameStateManager

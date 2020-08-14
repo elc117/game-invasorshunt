@@ -105,7 +105,7 @@ public class Play extends GameState {
             setPlayerHits(dt);
 
         // Punches if player delay is not set
-        if (!player.getDeathCondition() && !player.getStop() && player.handleInput())
+        if (!player.getWinCondition() && !player.getDeathCondition() && !player.getStop() && player.handleInput())
             getBodiesToRemove(dt);
 
 
