@@ -243,11 +243,11 @@ public class Play extends GameState {
         if(pause) {
             String title = "Pause";
 
-            BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
+            BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/fontTitle.fnt"));
 
             GlyphLayout layout = new GlyphLayout();
             layout.setText(font, title);
-            font.setColor(Color.YELLOW);
+            font.setColor(Color.BLACK);
             float layoutWidth = layout.width;
 
             font.draw(

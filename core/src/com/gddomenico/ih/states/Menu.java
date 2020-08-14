@@ -30,7 +30,7 @@ public class Menu extends GameState {
 	public Menu(GameStateManager gsm) {
         super(gsm);
 
-        titleFont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
+        titleFont = new BitmapFont(Gdx.files.internal("fonts/fontTitle.fnt"));
 
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
         font.getData().setScale(invasorsHunt.SCALE/2.5f);
@@ -91,7 +91,7 @@ public class Menu extends GameState {
 		cam.setToOrtho(false, V_WIDTH, V_HEIGHT);
     	GlyphLayout layout = new GlyphLayout();
     	layout.setText(titleFont, title);
-		titleFont.setColor(Color.YELLOW);
+		titleFont.setColor(Color.BLACK);
     	float width = layout.width;
     	
     	this.sb.setProjectionMatrix(this.cam.combined);
@@ -130,7 +130,7 @@ public class Menu extends GameState {
 					sb,
 					instrucoes,
 					(invasorsHunt.V_WIDTH - width) / 2,
-					invasorsHunt.V_HEIGHT - 15
+					invasorsHunt.V_HEIGHT - 30
 			);
 			String texto[] = new String[] {
 					"Voce e um globulo branco dentro de um corpo humano e seu objetivo",
